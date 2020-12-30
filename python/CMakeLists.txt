@@ -13,7 +13,7 @@ ELSE(WIN32)
 ENDIF(WIN32)
 
 # DO NOT use relative include path within *.i file, but add the include_path
-include_directories("${PROJECT_SOURCE_DIR}")
+include_directories(${PROJECT_SOURCE_DIR} ${PYTHON_INCLUDE_DIRS})
 
 set(MY_MODULE "freesteam")  # it is possible to use the same name as sharedlib name
 set(MY_SHARED_LIB "freesteam")

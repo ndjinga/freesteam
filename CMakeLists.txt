@@ -110,11 +110,10 @@ if   ( FREESTEAM_WITH_PYTHON )
     find_package(Python REQUIRED COMPONENTS Interpreter Development )
     SET(PYTHON_EXECUTABLE ${Python_EXECUTABLE})
     set(PYTHON_LIBRARIES     ${Python_LIBRARIES})
-    INCLUDE_DIRECTORIES(${Python_INCLUDE_DIRS})
+    set(PYTHON_INCLUDE_DIRS  ${Python_INCLUDE_DIRS})
   ELSE (${CMAKE_VERSION} VERSION_GREATER "3.12.0")
     find_package(PythonInterp REQUIRED )
     find_package(PythonLibs   REQUIRED )
-    INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_DIRS})
   ENDIF(${CMAKE_VERSION} VERSION_GREATER "3.12.0")
 
   find_package(SWIG REQUIRED)  # cmake 3 has official swig support
