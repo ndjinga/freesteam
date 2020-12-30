@@ -1,4 +1,4 @@
-#to use this: change the source file name for your project
+INCLUDE(${SWIG_USE_FILE})
 
 ######################################
 # setup has been done in project level, just do it again
@@ -24,33 +24,24 @@ set(MY_SWIG_INTERFACE "freesteam.i")
 ######################################
 message( WARNING "Freesteam warning : if cmake fails, turn off SWIG option in cmake, and then build with setup.py")
 
-if(${CMAKE_VERSION} VERSION_GREATER "3.6.0") 
-    include(UseSWIG)
+file(COPY freesteam.i DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_BINARY_DIR}/freesteam.i PROPERTIES CPLUSPLUS ON)
+SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_BINARY_DIR}/freesteam.i PROPERTIES C OFF)
+SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_BINARY_DIR}/freesteam.i PROPERTIES SWIG_DEFINITIONS "-shadow")
 
-    # error here
-    #set_property(SOURCE ${MY_SWIG_INTERFACE}  PROPERTIES SWIG_FLAGS "-includeall")
-    #set_property(SOURCE  ${MY_SWIG_INTERFACE}  PROPERTY CPLUSPLUS ON)  # for C++ code
+if(${CMAKE_VERSION} VERSION_GREATER "3.8.0") 
+  SWIG_ADD_LIBRARY(freesteam TYPE SHARED LANGUAGE python SOURCES ${CMAKE_CURRENT_BINARY_DIR}/freesteam.i)
+else(${CMAKE_VERSION} VERSION_GREATER "3.8.0")  # this section is not tested
+  swig_add_module(${MY_MODULE}   python    ${MY_SWIG_INTERFACE}   )
+endif(${CMAKE_VERSION} VERSION_GREATER "3.8.0")
 
-    #TYPE <SHARED|MODULE|STATIC|USE_BUILD_SHARED_LIBS>  default to MODULE
-    swig_add_library(${MY_MODULE}
-                        LANGUAGE python
-                        #NO_PROXY
-                        OUTPUT_DIR ${PROJECT_BINARY_DIR}
-                        #OUTFILE_DIR ${PROJECT_BINARY_DIR}/lib
-                        SOURCES ${MY_SWIG_INTERFACE}
-                    )
-else(${CMAKE_VERSION} VERSION_GREATER "3.6.0")  # this section is not tested
-    INCLUDE(${SWIG_USE_FILE}) # 3.6 or less
-    #http://www.swig.org/Doc3.0/SWIGDocumentation.html#Introduction_build_system
-    #SET_SOURCE_FILES_PROPERTIES(  ${MY_SWIG_INTERFACE}  PROPERTIES CPLUSPLUS ON)
-    SET_SOURCE_FILES_PROPERTIES(${MY_SWIG_INTERFACE}  PROPERTIES SWIG_FLAGS "-includeall")
+SWIG_LINK_LIBRARIES(freesteam ${PYTHON_LIBRARIES}  freesteamCPP )
 
-    swig_add_module(${MY_MODULE}
-                        python
-                    ${MY_SWIG_INTERFACE}
-                    )
-endif(${CMAKE_VERSION} VERSION_GREATER "3.6.0")
+INSTALL(TARGETS _freesteam DESTINATION lib/freesteam)
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/freesteam.py DESTINATION bin/freesteam)
 
-#set_target_properties(${MY_MODULE} PROPERTIES OUTPUT_NAME "freesteam")
-swig_link_libraries(${MY_MODULE} ${MY_SHARED_LIB} ${PYTHON_LIBRARIES})
-# the output wrap module are put into ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
+file(COPY ${PROJECT_SOURCE_DIR}/python/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR} FILES_MATCHING PATTERN "*.py")
+add_test(NAME freesteam_pytest COMMAND ${PYTHON_EXECUTABLE} ./test.py)  
+set_property(TEST freesteam_pytest PROPERTY ENVIRONMENT "LD_LIBRARY_PATH=${CMAKE_CURRENT_BINARY_DIR}:${CMAKE_BINARY_DIR}:${LD_LIBRARY_PATH}")
+set_property(TEST freesteam_pytest PROPERTY ENVIRONMENT      "PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}:${CMAKE_BINARY_DIR}:${PYTHONPATH}")
+	
