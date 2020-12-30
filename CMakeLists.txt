@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 2.8.11)  # centos7
+cmake_minimum_required(VERSION 2.8.11)
 
-project("freesteam")
-set(PROJECT_BRIEF "a free implementation of IAPWS-IF97 thermophysical properties for water and steam")
+project("freesteam")#Version 3 by Qinfeng Xia (github.com/qingfengxia/freesteam), following John Pye
+set(PROJECT_BRIEF "A free implementation of IAPWS-IF97 thermophysical properties for water and steam")
 
 set(PACKAGE_VERSION_MAJOR "3")
 set(PACKAGE_VERSION_MINOR "0")
@@ -48,7 +48,7 @@ set(MY_TEST_SOURCES
 "src/test.c"
 )
 
-# if installed, if should be put in subfolder of `freesteam` on system include dir
+# if installed, it should be put in subfolder of `freesteam` on system include dir
 set(MY_HEADER_DIR "${PROJECT_SOURCE_DIR}/src")
 
 set(MY_HEADERS
@@ -87,15 +87,15 @@ add_library(freesteam SHARED ${MY_SOURCES})
 
 #GSL is only depedence
 find_package(GSL REQUIRED)
-if(GSL_FOUND)
+if  (GSL_FOUND)
     target_include_directories(freesteam PRIVATE ${GSL_INCLUDE_DIRS})
     target_link_libraries(freesteam ${GSL_LIBRARIES})
     install(TARGETS freesteam DESTINATION lib)
-else()
+else(GSL_FOUND)
     message(ERROR "GNU Scientific Library (GSL) lib and headers are not found:"
                 "please install libgls-dev or libgls-devel using package manager, "
                 "or export GSL_ROOT_DIR variable as hint")
-endif()
+endif(GSL_FOUND)
 
 # test main exe
 add_executable(freesteam_test ${MY_TEST_SOURCES})

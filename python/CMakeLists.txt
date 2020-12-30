@@ -8,9 +8,9 @@
 IF(WIN32)
    # windows
    SET(PY_EXTENSION "pyd")
-ELSE()
+ELSE(WIN32)
    SET(PY_EXTENSION "so")
-ENDIF()
+ENDIF(WIN32)
 
 # DO NOT use relative include path within *.i file, but add the include_path
 include_directories("${PROJECT_SOURCE_DIR}")
@@ -22,7 +22,7 @@ set(MY_SWIG_INTERFACE "freesteam.i")
 ######################################
 # swig build
 ######################################
-message( "if this cmake failed, turn off SWIG option in cmake, and then build with setup.py")
+message( WARNING "Freesteam warning : if cmake fails, turn off SWIG option in cmake, and then build with setup.py")
 
 if(${CMAKE_VERSION} VERSION_GREATER "3.6.0") 
     include(UseSWIG)
@@ -39,7 +39,7 @@ if(${CMAKE_VERSION} VERSION_GREATER "3.6.0")
                         #OUTFILE_DIR ${PROJECT_BINARY_DIR}/lib
                         SOURCES ${MY_SWIG_INTERFACE}
                     )
-else()  # this section is not tested
+else(${CMAKE_VERSION} VERSION_GREATER "3.6.0")  # this section is not tested
     INCLUDE(${SWIG_USE_FILE}) # 3.6 or less
     #http://www.swig.org/Doc3.0/SWIGDocumentation.html#Introduction_build_system
     #SET_SOURCE_FILES_PROPERTIES(  ${MY_SWIG_INTERFACE}  PROPERTIES CPLUSPLUS ON)
@@ -49,7 +49,7 @@ else()  # this section is not tested
                         python
                     ${MY_SWIG_INTERFACE}
                     )
-endif()
+endif(${CMAKE_VERSION} VERSION_GREATER "3.6.0")
 
 #set_target_properties(${MY_MODULE} PROPERTIES OUTPUT_NAME "freesteam")
 swig_link_libraries(${MY_MODULE} ${MY_SHARED_LIB} ${PYTHON_LIBRARIES})
