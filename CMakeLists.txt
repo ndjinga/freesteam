@@ -7,6 +7,7 @@ set(PACKAGE_VERSION_MAJOR "3")
 set(PACKAGE_VERSION_MINOR "0")
 set(PACKAGE_VERSION_PATCH "0")
 
+option (FREESTEAM_WITH_PYTHON        "Compile Python interface of freesteam" ON)
 # this version name is used by CPack
 set(PACKAGE_VERSION_NAME ${PACKAGE_VERSION_MAJOR}.${PACKAGE_VERSION_MINOR})
 
