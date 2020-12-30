@@ -4,7 +4,7 @@ project("freesteam")#Version 3 by Qinfeng Xia (github.com/qingfengxia/freesteam)
 set(PROJECT_BRIEF "A free implementation of IAPWS-IF97 thermophysical properties for water and steam")
 
 set(PACKAGE_VERSION_MAJOR "3")
-set(PACKAGE_VERSION_MINOR "0")
+set(PACKAGE_VERSION_MINOR "1")
 set(PACKAGE_VERSION_PATCH "0")
 
 option (FREESTEAM_WITH_PYTHON        "Compile Python interface of freesteam" ON)
