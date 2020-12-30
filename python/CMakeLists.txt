@@ -4,9 +4,6 @@
 # setup has been done in project level, just do it again
 ######################################
 
-find_package(PythonInterp REQUIRED)
-message(STATUS "Found Python: ${PYTHON_EXECUTABLE} (found version \"${PYTHON_VERSION_STRING}\")")
-
 # cross OS setup
 IF(WIN32)
    # windows
@@ -27,11 +24,6 @@ set(MY_SWIG_INTERFACE "freesteam.i")
 ######################################
 message( "if this cmake failed, turn off SWIG option in cmake, and then build with setup.py")
 
-#how to enforce python3
-FIND_PACKAGE(PythonLibs)
-INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
-
-find_package(SWIG REQUIRED)  # cmake 3 has official swig support
 if(${CMAKE_VERSION} VERSION_GREATER "3.6.0") 
     include(UseSWIG)
 

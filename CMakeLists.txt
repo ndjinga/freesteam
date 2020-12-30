@@ -97,7 +97,22 @@ include_directories(${MY_HEADER_DIR})
 target_link_libraries(freesteam_test freesteam)
 
 #swig wrapping
-add_subdirectory("python")
+if   ( FREESTEAM_WITH_PYTHON )
+  IF   (${CMAKE_VERSION} VERSION_GREATER "3.12.0")
+    find_package(Python REQUIRED COMPONENTS Interpreter Development )
+    SET(PYTHON_EXECUTABLE ${Python_EXECUTABLE})
+    set(PYTHON_LIBRARIES     ${Python_LIBRARIES})
+    INCLUDE_DIRECTORIES(${Python_INCLUDE_DIRS})
+  ELSE (${CMAKE_VERSION} VERSION_GREATER "3.12.0")
+    find_package(PythonInterp REQUIRED )
+    find_package(PythonLibs   REQUIRED )
+    INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_DIRS})
+  ENDIF(${CMAKE_VERSION} VERSION_GREATER "3.12.0")
+
+  find_package(SWIG REQUIRED)  # cmake 3 has official swig support
+
+  add_subdirectory("python")
+endif( FREESTEAM_WITH_PYTHON )
 
 #RPM spec config
 #configure_file()
