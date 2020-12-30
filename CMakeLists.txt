@@ -78,6 +78,9 @@ set(MY_HEADERS
 "src/zeroin.h"
 )
 
+file(COPY ${MY_HEADER_DIR} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+install(FILES ${MY_HEADERS} DESTINATION include)
+
 add_library(freesteam SHARED ${MY_SOURCES})
 
 #GSL is only depedence
@@ -85,6 +88,7 @@ find_package(GSL REQUIRED)
 if(GSL_FOUND)
     target_include_directories(freesteam PRIVATE ${GSL_INCLUDE_DIRS})
     target_link_libraries(freesteam ${GSL_LIBRARIES})
+    install(TARGETS freesteam DESTINATION lib)
 else()
     message(ERROR "GNU Scientific Library (GSL) lib and headers are not found:"
                 "please install libgls-dev or libgls-devel using package manager, "
