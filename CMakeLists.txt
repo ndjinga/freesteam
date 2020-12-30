@@ -8,6 +8,8 @@ set(PACKAGE_VERSION_MINOR "0")
 set(PACKAGE_VERSION_PATCH "0")
 
 option (FREESTEAM_WITH_PYTHON        "Compile Python interface of freesteam" ON)
+enable_testing ()
+
 # this version name is used by CPack
 set(PACKAGE_VERSION_NAME ${PACKAGE_VERSION_MAJOR}.${PACKAGE_VERSION_MINOR})
 
@@ -99,6 +101,8 @@ endif()
 add_executable(freesteam_test ${MY_TEST_SOURCES})
 include_directories(${MY_HEADER_DIR})
 target_link_libraries(freesteam_test freesteam)
+install(TARGETS freesteam_test DESTINATION test)
+add_test(NAME freesteam_test  COMMAND "./freesteam_test")  
 
 #swig wrapping
 if   ( FREESTEAM_WITH_PYTHON )
