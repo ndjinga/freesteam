@@ -1,6 +1,14 @@
 FREESTEAM CHANGELOG
 ===================
 
+3.1
+30 Dec 2020
+-----------
+
+- cmake updates (version 3.14.2 used) for python detection and use (Michael Ndjinga)
+- Added a cmake option for the generation of the python interface (FREESTEAM_WITH_PYTHON) (Michael Ndjinga)
+- added targets 'make install' and 'make test' (Michael Ndjinga)
+
 3.0
 08 Nov 2019
 -----------
