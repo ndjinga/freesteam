@@ -13,7 +13,7 @@ ELSE(WIN32)
 ENDIF(WIN32)
 
 # DO NOT use relative include path within *.i file, but add the include_path
-include_directories(${PROJECT_SOURCE_DIR} ${PYTHON_INCLUDE_DIRS})
+include_directories(${MY_HEADER_DIR} ${PYTHON_INCLUDE_DIRS})
 
 set(MY_MODULE "freesteam")  # it is possible to use the same name as sharedlib name
 set(MY_SHARED_LIB "freesteam")
@@ -25,8 +25,6 @@ set(MY_SWIG_INTERFACE "freesteam.i")
 message( WARNING "Freesteam warning : if cmake fails, turn off SWIG option in cmake, and then build with setup.py")
 
 file(COPY freesteam.i DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_BINARY_DIR}/freesteam.i PROPERTIES CPLUSPLUS ON)
-SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_BINARY_DIR}/freesteam.i PROPERTIES C OFF)
 SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_BINARY_DIR}/freesteam.i PROPERTIES SWIG_DEFINITIONS "-shadow")
 
 if(${CMAKE_VERSION} VERSION_GREATER "3.8.0") 
@@ -35,7 +33,7 @@ else(${CMAKE_VERSION} VERSION_GREATER "3.8.0")  # this section is not tested
   swig_add_module(${MY_MODULE}   python    ${MY_SWIG_INTERFACE}   )
 endif(${CMAKE_VERSION} VERSION_GREATER "3.8.0")
 
-SWIG_LINK_LIBRARIES(freesteam ${PYTHON_LIBRARIES}  freesteamCPP )
+SWIG_LINK_LIBRARIES(freesteam ${PYTHON_LIBRARIES}  freesteamCPP ${GSL_LIBRARIES} )
 
 INSTALL(TARGETS _freesteam DESTINATION lib/freesteam)
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/freesteam.py DESTINATION bin/freesteam)
