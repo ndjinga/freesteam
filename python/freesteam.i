@@ -103,7 +103,6 @@ You may not use it in commercially-released software."
 
 %{
 // function prototypes for included C use -- for reading by GCC
-#include "config.h"
 #include "common.h"
 #include "steam.h"
 #include "steam_ph.h"
@@ -122,7 +121,28 @@ You may not use it in commercially-released software."
 #include "bounds.h"
 #include "surftens.h"
 #include "viscosity.h"
+#include "thcond.h"
 %}
+
+%include "common.h"
+%include "steam_ph.h"
+%include "steam_ps.h"
+%include "steam_pT.h"
+%include "steam_pu.h"
+%include "steam_Ts.h"
+%include "steam_pv.h"
+%include "steam_Tx.h"
+%include "region1.h"
+%include "region2.h"
+%include "region3.h"
+%include "region4.h"
+%include "derivs.h"
+%include "solver2.h"
+%include "bounds.h"
+%include "surftens.h"
+%include "viscosity.h"
+%include "thcond.h"
+
 
 // steam.h
 
@@ -154,9 +174,6 @@ SteamState freesteam_region4_set_Tx(double T, double x);
 	const double k;
 	const double x;
 }
-
-%include "config.h"
-%include "common.h"
 
 // region 4.h
 double freesteam_region4_psat_T(double T);
@@ -208,7 +225,6 @@ double freesteam_mu_rhoT(double rho, double T);
 
 // derivs.h
 //double freesteam_deriv(SteamState S, char xyz[3]);
-%include "derivs.h"
 // don't include derivs.h because we don't want all the functions taking char arguments
 
 // NOTE: solver2 routines have been removed from the Python bindings.
