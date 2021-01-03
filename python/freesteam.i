@@ -103,6 +103,7 @@ You may not use it in commercially-released software."
 
 %{
 // function prototypes for included C use -- for reading by GCC
+#include "config.h"
 #include "common.h"
 #include "steam.h"
 #include "steam_ph.h"
@@ -124,6 +125,7 @@ You may not use it in commercially-released software."
 #include "thcond.h"
 %}
 
+%include "config.h"
 %include "common.h"
 %include "steam_ph.h"
 %include "steam_ps.h"
