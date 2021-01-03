@@ -44,7 +44,7 @@ paper_ratio = 11.6929134 / 8.26771654
 
 
 # supercritical region
-print "Supercritical region..."
+print( "Supercritical region...")
 
 supcrit_p = [250,300,400,500]
 supcrit_T = linspace(tmin,tmax,50)
@@ -62,11 +62,11 @@ for i in supcrit_p:
 
 # lines of constant pressure
 
-print "Lines of constant pressure..."
+print( "Lines of constant pressure...")
 
 for i in pressure_range:
     p = i * 1e5 #bar
-    #print "p = %f bar"%p
+    #print( "p = %f bar"%p)
     S = region4_Tx(Tsat_p(p),1)
     saturation_T = (S.T-273.15)
     superheat_T_range = linspace(saturation_T,tmax,50)
@@ -81,7 +81,7 @@ for i in pressure_range:
 
     for j in superheat_T_range:
         T = j+273.15 # K
-        #print "p = %f, T = %f" %(p,T)
+        #print( "p = %f, T = %f" %(p,T) )
         S = steam_pT(p,T)
         if S.T > Tsat_p(S.p):
             x.append(S.s/1000)
@@ -102,7 +102,7 @@ for i in pressure_range:
                 
 # lines of constant dryness fraction
 
-print "Lines of dryness fraction (quality)..."
+print( "Lines of dryness fraction (quality)...")
 
 twophase_T = linspace(tmin,373,20)
 
@@ -119,11 +119,11 @@ for i in twophase_x_range:
 
 # lines of constant temperature
 
-print "Lines of constant temperature..."
+print( "Lines of constant temperature...")
 
 for i in const_T_range:
     T = i + 273.15 # K
-    #print "T = %f" % T
+    #print( "T = %f" % T )
     if T < TCRIT: # temperature is below the critical point
         S = region4_Tx(T,1)
         saturation_p = float(S.p / 1e5)        
@@ -179,10 +179,10 @@ yticks(ytickloc,ylabels)
 xlim( smin,smax )
 ylim( hmin,hmax )
 
-print "Exporting PDF file to current directory..."
+print( "Exporting PDF file to current directory...")
 savefig('mollier.pdf')
 
-#print "Exporting EPS file to current directory..."
+#print( "Exporting EPS file to current directory...")
 #savefig('mollier.ps',dpi = 600)
 
 #show()
