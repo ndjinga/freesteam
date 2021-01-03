@@ -1,6 +1,6 @@
 import matplotlib
 # vim: fileencoding=utf-8
-matplotlib.use('gtkcairo')
+#matplotlib.use('gtkcairo')
 from pylab import *
 import freesteam
 
@@ -18,7 +18,6 @@ xlabel("T [K]")
 ylabel("∂p/∂T [bar/K]")
 
 figure()
-hold(1)
 plot(T,rhof,'b-',label="liquid")
 plot(T,rhog,'r-',label="vapour")
 title("Saturation curves, density versus temperature")
@@ -37,5 +36,8 @@ axis([273.15,freesteam.TCRIT,-20,+20])
 xlabel("T [K]")
 ylabel(r"$\partial \rho / \partial T$ [kg/m3]")
 
-show()
+print( "Exporting PDF file to current directory...")
+savefig('satCurve.pdf')
+
+#show()
 

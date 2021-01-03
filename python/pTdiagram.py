@@ -1,11 +1,10 @@
 import freesteam
 import matplotlib
-matplotlib.use('gtkcairo')
+#matplotlib.use('gtkcairo')
 from pylab import *
 import math
 
 figure()
-hold(1)
 
 # SATURATION CURVE
 
@@ -27,13 +26,13 @@ TT = arange(Tmin,Tmax,DT/500)
 im = zeros((len(pp),len(TT)))
 x = 0
 for p in pp:
-	#print "p = %f MPa" % (p/1e6)
+	#print( "p = %f MPa" % (p/1e6) )
 	y = 0
 	for T in TT:
 		S = freesteam.steam_pT(p,T)
-		#print "p = %f, T = %f" % (p,T)
+		#print( "p = %f, T = %f" % (p,T) )
 		r = S.region
-		#print "p = %f MPa, T = %f K, region[%d,%d] = %d" % (p/1e6,T,x,y,r)
+		#print( "p = %f MPa, T = %f K, region[%d,%d] = %d" % (p/1e6,T,x,y,r) )
 		im[x,y] = float(r) / 4.
 		y += 1
 	x += 1
@@ -65,6 +64,10 @@ axis([Tmin,Tmax,pmin/1e6,pmax/1e6])
 
 xlabel('T / [K]')
 ylabel('p / [MPa]')
-show()
+
+print( "Exporting PDF file to current directory...")
+savefig('pT-Diagram.pdf')
+
+#show()
 
 

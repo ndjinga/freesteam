@@ -4,6 +4,7 @@
 # Example of 3D (T,s,p) surface plotted using new Matplotlib 3D-plotting feature.
 # Contributed by Rod Stephenson. Thanks!
 
+from pylab import *
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
@@ -37,7 +38,11 @@ def plot_tsp3d():
     sg = [freesteam.region4_Tx(T,1).s/1e3 for T in TT0]
     ax.plot(psat, sf, TT0,'k-')
     ax.plot(psat, sg, TT0,'r-')
-    plt.show()
+
+    print( "Exporting PDF file to current directory...")
+    savefig('Th-Diagram.pdf')
+
+    #plt.show()
 
 if __name__ == '__main__':
     plot_tsp3d()

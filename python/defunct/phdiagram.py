@@ -1,11 +1,10 @@
 import freesteam
 import matplotlib
-matplotlib.use('gtkcairo')
+#matplotlib.use('gtkcairo')
 from pylab import *
 import math, sys
 
 figure()
-hold(1)
 
 # SATURATION CURVE
 
@@ -31,11 +30,11 @@ hh = arange(hmin,hmax,Dh/400)
 im = zeros((len(pp),len(hh)))
 x = 0
 for p in pp:
-	#print "p = %f MPa" % (p/1e6)
+	#print( "p = %f MPa" % (p/1e6) )
 	y = 0
 	for h in hh:
 		r = freesteam.region_ph(p,h)
-		#print "p = %f MPa, h = %f kJ/kg, region[%d,%d] = %d, T = %f" % (p/1e6,h/1e3,x,y,r,S.T)
+		#print( "p = %f MPa, h = %f kJ/kg, region[%d,%d] = %d, T = %f" % (p/1e6,h/1e3,x,y,r,S.T) )
 		im[x,y] = float(r) / 4.
 		y += 1
 	x += 1
@@ -46,11 +45,11 @@ imshow(im,extent=[hmin/1e3,hmax/1e3,pmin/1e6,pmax/1e6],origin='lower',aspect='au
 
 TT = logspace(math.log10(273.15),math.log10(1073.15),30)
 for T in TT:
-	print "T =",T
+	print( "T =",T )
 	smin = freesteam.bound_pmax_T(T).s + 0.1 
 	smax = freesteam.region2_pT(1,T).s - 0.1
 	ss = linspace(smin,smax,1000)
-	#print "smin =",smin, ", smax =",smax
+	#print( "smin =",smin, ", smax =",smax )
 	#continue
 	hh = []
 	pp = []
@@ -70,11 +69,11 @@ for T in TT:
 
 ss = linspace(1,11,30) * 1e3
 for s in ss:
-	print "s =",s
+	print( "s =",s)
 	Tmin = freesteam.steam_ps(freesteam.PMAX,s).T
 	Tmax = freesteam.steam_ps(freesteam.PTRIPLE,s).T
 	TT = linspace(Tmin,Tmax,1000)
-	#print "smin =",smin, ", smax =",smax
+	#print( "smin =",smin, ", smax =",smax)
 	#continue
 	hh = []
 	pp = []

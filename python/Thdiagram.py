@@ -1,11 +1,10 @@
 import freesteam
 import matplotlib
-matplotlib.use('gtkcairo')
+#matplotlib.use('gtkcairo')
 from pylab import *
 import math
 
 figure()
-hold(1)
 n = 400
 TT = [273.15 + (freesteam.TCRIT - 273.15)*x/n for x in range(n+1)]
 
@@ -19,7 +18,7 @@ pp = logspace(-3,3)*1e5
 # these are the pressures we're interested in here
 pp = [freesteam.psat_T(50+273.15), 3e6, 12e6,  165e5, 300e5]
 
-print "low p =",pp[0]
+print( "low p =",pp[0] )
 
 hh = arange(50.,4500.,100)*1e3
 
@@ -65,4 +64,8 @@ quiver(x,y,u,v,alpha=1)
 axis([0,4500,273.15,1073.15])
 xlabel('h / [kJ/kg]')
 ylabel('T / [K]')
-show()
+
+print( "Exporting PDF file to current directory...")
+savefig('Th-Diagram.pdf')
+
+#show()

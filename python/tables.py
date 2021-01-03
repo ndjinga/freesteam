@@ -126,7 +126,7 @@ def superheat_table(caption,variable,fout,p_range,t_range):
     elif variable == "internal":
         variable_label = r"Specific Internal Energy / [$\unit{kJ/kg}$]"
     else:
-        print "Option not recognised"
+        print( "Option not recognised")
         raise SystemExit
     fout.write(r"$T$/[$^\circ C$] & \multicolumn{%d}{c}{%s} \\" % ((len(p_range)-1),variable_label))
     fout.write("\n")
@@ -148,7 +148,7 @@ def superheat_table(caption,variable,fout,p_range,t_range):
                 data = round((S.u / 1000),2)
                 fout.write(r"& %4.4g " %  data)
             else:
-                print "Option not recognised"
+                print( "Option not recognised")
                 raise SystemExit
 
         fout.write(r"\\")
@@ -197,7 +197,7 @@ def thermophys_table(caption, T_range):
 	fout.write("\n")
 	fout.write("""\end{table}\n""")
 
-print "tables.py - script to get data for Steam Tables"
+print( "tables.py - script to get data for Steam Tables")
 
 # Create a latex file
 fout = open("steamtable.tex","w")
@@ -220,13 +220,13 @@ version_string = "Calculated with freesteam v%s using the IAPWS-IF97 Industrial 
 
 fout.write(version_string)
 
-print "Creating Table 7..."
+print( "Creating Table 7...")
 # Equivalent to Table 7 in Haywood Steam Tables: Saturated Water and
 # Steam by Temperature from Triple Point to 100 deg C
 # Actually we split into two tables 7a and 7b so as to make typesetting easier
 
 #Table 7A
-T_range = [Ttriple] + range(2,51,2) # Range of table in deg C
+T_range = [Ttriple] + list(range(2,51,2)) # Range of table in deg C
 caption = r"Saturated Water and Steam (Triple Point to 50$\unit{^\circ C}$)"
 temperature_table(T_range,caption,fout)
 
@@ -235,7 +235,7 @@ T_range = range(50,101,2) # Range of table in deg C
 caption = r"Saturated Water and Steam (50 to 100 $\unit{^\circ C}$)"
 temperature_table(T_range,caption,fout)
 
-print "Creating Table 8..."
+print( "Creating Table 8...")
 #Table 8 - values by pressure all the way up to the crtical point....
 
 # Given the non-uniform spacing here sometimes the manual way is the best...
@@ -269,7 +269,7 @@ p_range = (90,92,94,96,98,100,105,110,115,120,125,130,135,140,145,150,155,160,16
 caption = r"Saturated Water and Steam (90 to 220 $\unit{bar}$)"
 pressure_table(p_range,caption,fout)
 
-print "Creating Table 9,10,11 and 12"
+print( "Creating Table 9,10,11 and 12")
 p_range = [0.1,0.5,1,5,10,20,40,60,80,100,150,200,250,300,400,500]
 t_range = [0,25,50,75,100,125,150,175,200,225,250,275,300,350,400,450,500,550,600,650,700,750,800]
 superheat_table("Enthalpy of Water and Steam","enthalpy",fout,p_range,t_range)
@@ -277,11 +277,11 @@ superheat_table("Entropy of Water and Steam","entropy",fout,p_range,t_range)
 superheat_table("Density of Water and Steam","density",fout,p_range,t_range)
 superheat_table("Internal Energy of Water and Steam","internal",fout,p_range,t_range)
 
-print "Creating thermophysical properties table"
+print( "Creating thermophysical properties table")
 t_range = [0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,110,120,130,140,150,160,180,200,220,240,260,280,300,320,340,360, 370]
 thermophys_table("Transport properties of water (saturated liquid)",t_range)
 
-print "including hsdiagram"
+print( "including hsdiagram")
 fout.write(r"""
 
 \begin{figure}

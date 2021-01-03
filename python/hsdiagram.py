@@ -180,10 +180,10 @@ xlim( smin,smax )
 ylim( hmin,hmax )
 
 print( "Exporting PDF file to current directory...")
-savefig('mollier.pdf')
+savefig('mollier-hsDiagram.pdf')
 
 #print( "Exporting EPS file to current directory...")
-#savefig('mollier.ps',dpi = 600)
+#savefig('mollierhsDiagram.ps',dpi = 600)
 
 #show()
 
