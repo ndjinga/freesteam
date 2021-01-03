@@ -1,7 +1,7 @@
 #ifndef FREESTEAM_CONFIG_H
 #define FREESTEAM_CONFIG_H
 
-#define FREESTEAM_VERSION "3.0"
+#define FREESTEAM_VERSION "3.1"
 
 #endif
 
