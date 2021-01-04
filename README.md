@@ -18,6 +18,7 @@ Credit goes to Qingfeng Xia <https://github.com/qingfengxia/freesteam>
 + GSL (gnu scientific library), mandatory. Package 'gsl-devel' on Fedora, 'libgsl-dev' on Ubuntu
 + python (optional), required if 'FREESTEAM_WITH_PYTHON=ON'. Package 'python-devel' on Fedora, 'python-dev' on Ubuntu
 + SWIG (optional), required if 'FREESTEAM_WITH_PYTHON=ON'. Package 'swig' on Fedora and Ubuntu
++ matplotlib (optional), for curves plotting. Package 'python-matplotlib' on Fedora and Ubuntu
 
 ### Overview of the features 
 
