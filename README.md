@@ -14,9 +14,11 @@ Credit goes to Qingfeng Xia <https://github.com/qingfengxia/freesteam>
 
 ### Prerequisites
 
-+ GSL (gnu scientific library), mandatory. Package gsl-devel on Fedora, libgsl-dev on Ubuntu
-+ python (optional), required if FREESTEAM_WITH_PYTHON=ON. Package python-devel on Fedora, python-dev on Ubuntu
-+ SWIG (optional), required if FREESTEAM_WITH_PYTHON=ON. Package swig on Fedora, swig on Ubuntu
++ CMake, mandatory. Package 'cmake' on Fedora and Ubuntu
++ GSL (gnu scientific library), mandatory. Package 'gsl-devel' on Fedora, 'libgsl-dev' on Ubuntu
++ python (optional), required if 'FREESTEAM_WITH_PYTHON=ON'. Package 'python-devel' on Fedora, 'python-dev' on Ubuntu
++ SWIG (optional), required if 'FREESTEAM_WITH_PYTHON=ON'. Package 'swig' on Fedora and Ubuntu
+
 ### Overview of the features 
 
 On the latest github version 3.0 (released in Nov 2019)
