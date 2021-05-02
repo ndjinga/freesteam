@@ -15,7 +15,7 @@ Credit goes to Qingfeng Xia <https://github.com/qingfengxia/freesteam>
 ### Prerequisites
 
 + CMake, mandatory. Package 'cmake' on Fedora and Ubuntu
-+ LAPACK (Linear Algebra PACKage), mandatory. Package 'lapack-devel' or 'openblas-devel' on Fedora, 'liblapack-dev' or 'libopenblas-dev' on Ubuntu
++ LAPACK (Linear Algebra PACKage), mandatory. Package 'lapack-devel' or 'openblas-devel' on Fedora, 'liblapacke-dev' on Ubuntu
 + GSL (gnu scientific library), mandatory. Package 'gsl-devel' on Fedora, 'libgsl-dev' on Ubuntu
 + python (optional), required if 'FREESTEAM_WITH_PYTHON=ON'. Package 'python-devel' on Fedora, 'python-dev' on Ubuntu
 + SWIG (optional), required if 'FREESTEAM_WITH_PYTHON=ON'. Package 'swig' on Fedora and Ubuntu

@@ -88,7 +88,7 @@ add_library(freesteamCPP SHARED ${MY_SOURCES})
 #LAPACK is only depedence
 find_package(LAPACK REQUIRED)
 if  (LAPACK_FOUND)
-    set(LAPACK_INCLUDE_DIRS "/usr/include/lapacke/ /usr/include/openblas/")
+    set(LAPACK_INCLUDE_DIRS "/usr/include/lapacke/ /usr/include/openblas/ /usr/include/ ${LAPACK_INCLUDE_DIRS} $ENV{LAPACK_INCLUDE_DIRS}")
 
     target_include_directories(freesteamCPP PRIVATE ${LAPACK_INCLUDE_DIRS} ${MY_HEADER_DIR})
     target_link_libraries(freesteamCPP ${LAPACK_LIBRARIES})
@@ -96,8 +96,8 @@ if  (LAPACK_FOUND)
 message (STATUS "LAPACK found at ${LAPACK_LIBRARIES}")
 else(LAPACK_FOUND)
     message(ERROR "Linear Algebra PACKage (LAPACK) lib and headers are not found:"
-                "please install lapack-devel or openblas-devel (RedHat/Fedora/CentOS) or liblapack-dev or libopenblas-dev (Debian/Ubuntu) using package manager, "
-                "or export LAPACK_LIBRARIES variable as hint")
+                "please install lapack-devel or openblas-devel (RedHat/Fedora/CentOS) or liblapacke-dev (Debian/Ubuntu) using package manager, "
+                "or export LAPACK_LIBRARIES and LAPACK_INCLUDE_DIRS variables as hint")
 endif(LAPACK_FOUND)
 
 #GSL is only depedence
