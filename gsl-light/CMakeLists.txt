@@ -2,8 +2,6 @@
 PROJECT(gsl-light)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
-add_library(gsl-light SHARED ${MY_SOURCES})
-
 FILE(GLOB_RECURSE gsl-light_CXX . *.cxx)
 FILE(GLOB_RECURSE gsl-light_HXX . *.hxx)
 
