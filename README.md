@@ -10,25 +10,27 @@ Migration from sourceforge to github and use of CMake and SWIG, to make it compa
 
 Credit goes to Qingfeng Xia <https://github.com/qingfengxia/freesteam>
 
+Upgraded to cmake 3.14.2, swig3 and python3, use of ctest for C and Pyton tests (version 3.1)
+
 [License](LICENSE.txt): GPL as original release
 
 ### Prerequisites
 
 + CMake, mandatory. Package 'cmake' on Fedora and Ubuntu
 + LAPACK (Linear Algebra PACKage), mandatory. Package 'lapack-devel' or 'openblas-devel' on Fedora, 'liblapacke-dev' on Ubuntu
-+ GSL (gnu scientific library), mandatory. Package 'gsl-devel' on Fedora, 'libgsl-dev' on Ubuntu
++ GSL (gnu scientific library), (optional). Package 'gsl-devel' on Fedora, 'libgsl-dev' on Ubuntu
 + python (optional), required if 'FREESTEAM_WITH_PYTHON=ON'. Package 'python-devel' on Fedora, 'python-dev' on Ubuntu
 + SWIG (optional), required if 'FREESTEAM_WITH_PYTHON=ON'. Package 'swig' on Fedora and Ubuntu
 + matplotlib (optional), for curves plotting. Package 'python-matplotlib' on Fedora and Ubuntu
 
 ### Overview of the features 
 
-On the latest github version 3.0 (released in Nov 2019)
+On the latest github version 3.1 (released in Nov 2019)
 
-+ cmake updates (cmake version 3.14.2 used) for python detection and use 
-+ Added a cmake option for the generation of the python interface (FREESTEAM_WITH_PYTHON) 
-+ added targets 'make install' and 'make test' 
-+ tested and used on Ubuntu 20.04 and Fedora 30 with gcc 9.0.1, swig3 and python3
++ New directory gsl-light 
++ Removed dependence on gsl library
+
+[Readme of version 3.1](README-3.1.md)
 
 [Readme of version 3.0](README-3.0.md)
 
@@ -45,5 +47,5 @@ make test
 make install 
 ```
 
-Version definition: version jumps from 3.0 to 3.1 to indicate updates
+Version definition: version jumps from 3.1 to 3.2 to indicate updates
 
