@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <gsl/gsl_multiroots.h>
+#include <gsl_multiroots.h>
 
 /*------------------------------------------------------------------------------
   LOOKUP FOR APPROPRIATE PROPERTY EVALUATION FUNCTION

@@ -101,16 +101,16 @@ else(LAPACK_FOUND)
 endif(LAPACK_FOUND)
 
 #GSL is an optional depedence
-find_package(GSL REQUIRED)
-if  (GSL_FOUND)
+#find_package(GSL REQUIRED)
+if  (FALSE AND GSL_FOUND)
     target_include_directories(freesteamCPP PRIVATE ${GSL_INCLUDE_DIRS} )
     target_link_libraries(freesteamCPP ${GSL_LIBRARIES})
     message (STATUS "GSL found at ${GSL_LIBRARIES}")
-else(GSL_FOUND)
-    add_subdirectory(gsl-light)
-    target_include_directories(freesteamCPP PRIVATE ${gsl-light_HXX} )
-    target_link_libraries(freesteamCPP gsl-light.so )
-endif(GSL_FOUND)
+else(FALSE AND GSL_FOUND)
+    add_subdirectory(gsl)
+    target_include_directories(freesteamCPP PRIVATE ./gsl/multiroots )
+    target_link_libraries(freesteamCPP gsl-multiroots )
+endif(FALSE AND GSL_FOUND)
 
 install(TARGETS freesteamCPP DESTINATION lib)
 
