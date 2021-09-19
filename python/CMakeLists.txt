@@ -22,8 +22,6 @@ set(MY_SWIG_INTERFACE "freesteam.i")
 ######################################
 # swig build
 ######################################
-message( WARNING "Freesteam warning : if cmake fails, turn off SWIG option in cmake, and then build with setup.py")
-
 file(COPY freesteam.i DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_BINARY_DIR}/freesteam.i PROPERTIES SWIG_DEFINITIONS "-shadow")
 
