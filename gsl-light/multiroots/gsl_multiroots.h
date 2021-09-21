@@ -38,44 +38,46 @@
 
 __BEGIN_DECLS
 
+/* From err/gsl_errno.h */
 enum { 
   GSL_SUCCESS  = 0, 
   GSL_FAILURE  = -1,
   GSL_CONTINUE = -2,  /* iteration has not converged */
-  GSL_EDOM     = 1,   /* input domain error, e.g sqrt(-1) */
-  GSL_ERANGE   = 2,   /* output range error, e.g. exp(1e100) */
-  GSL_EFAULT   = 3,   /* invalid pointer */
-  GSL_EINVAL   = 4,   /* invalid argument supplied by user */
-  GSL_EFAILED  = 5,   /* generic failure */
-  GSL_EFACTOR  = 6,   /* factorization failed */
-  GSL_ESANITY  = 7,   /* sanity check failed - shouldn't happen */
+  //GSL_EDOM     = 1,   /* input domain error, e.g sqrt(-1) */
+  //GSL_ERANGE   = 2,   /* output range error, e.g. exp(1e100) */
+  //GSL_EFAULT   = 3,   /* invalid pointer */
+  //GSL_EINVAL   = 4,   /* invalid argument supplied by user */
+  //GSL_EFAILED  = 5,   /* generic failure */
+  //GSL_EFACTOR  = 6,   /* factorization failed */
+  //GSL_ESANITY  = 7,   /* sanity check failed - shouldn't happen */
   GSL_ENOMEM   = 8,   /* malloc failed */
   GSL_EBADFUNC = 9,   /* problem with user-supplied function */
-  GSL_ERUNAWAY = 10,  /* iterative process is out of control */
-  GSL_EMAXITER = 11,  /* exceeded max number of iterations */
-  GSL_EZERODIV = 12,  /* tried to divide by zero */
+  //GSL_ERUNAWAY = 10,  /* iterative process is out of control */
+  //GSL_EMAXITER = 11,  /* exceeded max number of iterations */
+  //GSL_EZERODIV = 12,  /* tried to divide by zero */
   GSL_EBADTOL  = 13,  /* user specified an invalid tolerance */
-  GSL_ETOL     = 14,  /* failed to reach the specified tolerance */
-  GSL_EUNDRFLW = 15,  /* underflow */
-  GSL_EOVRFLW  = 16,  /* overflow  */
-  GSL_ELOSS    = 17,  /* loss of accuracy */
-  GSL_EROUND   = 18,  /* failed because of roundoff error */
-  GSL_EBADLEN  = 19,  /* matrix, vector lengths are not conformant */
-  GSL_ENOTSQR  = 20,  /* matrix not square */
-  GSL_ESING    = 21,  /* apparent singularity detected */
-  GSL_EDIVERGE = 22,  /* integral or series is divergent */
-  GSL_EUNSUP   = 23,  /* requested feature is not supported by the hardware */
-  GSL_EUNIMPL  = 24,  /* requested feature not (yet) implemented */
-  GSL_ECACHE   = 25,  /* cache limit exceeded */
-  GSL_ETABLE   = 26,  /* table limit exceeded */
-  GSL_ENOPROG  = 27,  /* iteration is not making progress towards solution */
-  GSL_ENOPROGJ = 28,  /* jacobian evaluations are not improving the solution */
-  GSL_ETOLF    = 29,  /* cannot reach the specified tolerance in F */
-  GSL_ETOLX    = 30,  /* cannot reach the specified tolerance in X */
-  GSL_ETOLG    = 31,  /* cannot reach the specified tolerance in gradient */
-  GSL_EOF      = 32   /* end of file */
+  //GSL_ETOL     = 14,  /* failed to reach the specified tolerance */
+  //GSL_EUNDRFLW = 15,  /* underflow */
+  //GSL_EOVRFLW  = 16,  /* overflow  */
+  //GSL_ELOSS    = 17,  /* loss of accuracy */
+  //GSL_EROUND   = 18,  /* failed because of roundoff error */
+  //GSL_EBADLEN  = 19,  /* matrix, vector lengths are not conformant */
+  //GSL_ENOTSQR  = 20,  /* matrix not square */
+  //GSL_ESING    = 21,  /* apparent singularity detected */
+  //GSL_EDIVERGE = 22,  /* integral or series is divergent */
+  //GSL_EUNSUP   = 23,  /* requested feature is not supported by the hardware */
+  //GSL_EUNIMPL  = 24,  /* requested feature not (yet) implemented */
+  //GSL_ECACHE   = 25,  /* cache limit exceeded */
+  //GSL_ETABLE   = 26,  /* table limit exceeded */
+  //GSL_ENOPROG  = 27,  /* iteration is not making progress towards solution */
+  //GSL_ENOPROGJ = 28,  /* jacobian evaluations are not improving the solution */
+  //GSL_ETOLF    = 29,  /* cannot reach the specified tolerance in F */
+  //GSL_ETOLX    = 30,  /* cannot reach the specified tolerance in X */
+  //GSL_ETOLG    = 31,  /* cannot reach the specified tolerance in gradient */
+  //GSL_EOF      = 32   /* end of file */
 } ;
 
+/* From err/error.c */
 const char *
 gsl_strerror (const int gsl_errno)
 {
@@ -155,6 +157,43 @@ gsl_strerror (const int gsl_errno)
       return "unknown error code" ;
     }
 }
+
+/* From err/error.c */
+void
+gsl_error (const char * reason, const char * file, int line, int gsl_errno)
+{
+  if (gsl_error_handler) 
+    {
+      (*gsl_error_handler) (reason, file, line, gsl_errno);
+      return ;
+    }
+
+  gsl_stream_printf ("ERROR", file, line, reason);
+
+  fflush (stdout);
+  fprintf (stderr, "Default GSL error handler invoked.\n");
+  fflush (stderr);
+
+  abort ();
+}
+
+/* GSL_ERROR: call the error handler, and return the error code */
+/* From err/gsl_errno.h */
+#define GSL_ERROR(reason, gsl_errno) \
+       do { \
+       gsl_error (reason, __FILE__, __LINE__, gsl_errno) ; \
+       return gsl_errno ; \
+       } while (0)
+
+/* From gsl_machine.h */
+/* -*-MACHINE CONSTANTS-*-
+ *
+ * PLATFORM: Whiz-O-Matic 9000
+ * FP_PLATFORM: IEEE-Virtual
+ * HOSTNAME: nnn.lanl.gov
+ * DATE: Fri Nov 20 17:53:26 MST 1998
+ */
+#define GSL_DBL_EPSILON        2.2204460492503131e-16
 
 /* Definition of vector-valued functions with parameters based on gsl_vector */
 
@@ -278,11 +317,6 @@ int gsl_multiroot_test_delta (const gsl_vector * dx, const gsl_vector * x,
                               double epsabs, double epsrel);
 
 int gsl_multiroot_test_residual (const gsl_vector * f, double epsabs);
-
-GSL_VAR const gsl_multiroot_fsolver_type * gsl_multiroot_fsolver_dnewton;
-GSL_VAR const gsl_multiroot_fsolver_type * gsl_multiroot_fsolver_broyden;
-GSL_VAR const gsl_multiroot_fsolver_type * gsl_multiroot_fsolver_hybrid;
-GSL_VAR const gsl_multiroot_fsolver_type * gsl_multiroot_fsolver_hybrids;
 
 GSL_VAR const gsl_multiroot_fdfsolver_type * gsl_multiroot_fdfsolver_newton;
 GSL_VAR const gsl_multiroot_fdfsolver_type * gsl_multiroot_fdfsolver_gnewton;
