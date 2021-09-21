@@ -24,29 +24,17 @@
 #include <gsl/gsl_test.h>
 #include <gsl/gsl_multiroots.h>
 
-#include <gsl/gsl_ieee_utils.h>
-
 #include "test_funcs.h"
 int test_fdf (const char * desc, gsl_multiroot_function_fdf * function, initpt_function initpt, double factor, const gsl_multiroot_fdfsolver_type * T);
-int test_f (const char * desc, gsl_multiroot_function_fdf * fdf, initpt_function initpt, double factor, const gsl_multiroot_fsolver_type * T);
 
 
 int 
 main (void)
 {
-  const gsl_multiroot_fsolver_type * fsolvers[5] ;
-  const gsl_multiroot_fsolver_type ** T1 ;
-
   const gsl_multiroot_fdfsolver_type * fdfsolvers[5] ;
   const gsl_multiroot_fdfsolver_type ** T2 ;
 
   double f;
-
-  fsolvers[0] = gsl_multiroot_fsolver_dnewton;
-  fsolvers[1] = gsl_multiroot_fsolver_broyden;
-  fsolvers[2] = gsl_multiroot_fsolver_hybrid;
-  fsolvers[3] = gsl_multiroot_fsolver_hybrids;
-  fsolvers[4] = 0;
 
   fdfsolvers[0] = gsl_multiroot_fdfsolver_newton;
   fdfsolvers[1] = gsl_multiroot_fdfsolver_gnewton;
@@ -54,26 +42,7 @@ main (void)
   fdfsolvers[3] = gsl_multiroot_fdfsolver_hybridsj;
   fdfsolvers[4] = 0;
 
-  gsl_ieee_env_setup();
-
-
   f = 1.0 ;
-  
-  T1 = fsolvers ;
-  
-  while (*T1 != 0) 
-    {
-      test_f ("Rosenbrock", &rosenbrock, rosenbrock_initpt, f, *T1);
-      test_f ("Roth", &roth, roth_initpt, f, *T1);
-      test_f ("Powell badly scaled", &powellscal, powellscal_initpt, f, *T1);
-      test_f ("Brown badly scaled", &brownscal, brownscal_initpt, f, *T1);
-      test_f ("Powell singular", &powellsing, powellsing_initpt, f, *T1);
-      test_f ("Wood", &wood, wood_initpt, f, *T1);
-      test_f ("Helical", &helical, helical_initpt, f, *T1);
-      test_f ("Discrete BVP", &dbv, dbv_initpt, f, *T1);
-      test_f ("Trig", &trig, trig_initpt, f, *T1);
-      T1++;
-    }
   
   T2 = fdfsolvers ;
   
