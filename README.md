@@ -12,13 +12,13 @@ Credit goes to Qingfeng Xia <https://github.com/qingfengxia/freesteam>
 
 Upgraded to cmake 3.14.2, swig3 and python3, use of ctest for C and Pyton tests (version 3.1)
 
-[License](LICENSE.txt): GPL as original release
+[License](LICENSE.txt): GPL as in the original release
 
 ### Prerequisites
 
 + CMake, mandatory. Package 'cmake' on Fedora and Ubuntu
 + LAPACK (Linear Algebra PACKage), mandatory. Package 'lapack-devel' or 'openblas-devel' on Fedora, 'liblapacke-dev' on Ubuntu
-+ GSL (gnu scientific library), (optional). Package 'gsl-devel' on Fedora, 'libgsl-dev' on Ubuntu
++ GSL (gnu scientific library), (optional), required if 'FREESTEAM_WITH_GSL=ON'. Package 'gsl-devel' on Fedora, 'libgsl-dev' on Ubuntu
 + python (optional), required if 'FREESTEAM_WITH_PYTHON=ON'. Package 'python-devel' on Fedora, 'python-dev' on Ubuntu
 + SWIG (optional), required if 'FREESTEAM_WITH_PYTHON=ON'. Package 'swig' on Fedora and Ubuntu
 + matplotlib (optional), for curves plotting. Package 'python-matplotlib' on Fedora and Ubuntu
