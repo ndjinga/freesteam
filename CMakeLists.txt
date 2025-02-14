@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 2.8.12)
 
 project("freesteam")#Version 3 by Qinfeng Xia (github.com/qingfengxia/freesteam), following John Pye
 set(PROJECT_BRIEF "A free implementation of IAPWS-IF97 thermophysical properties for water and steam")

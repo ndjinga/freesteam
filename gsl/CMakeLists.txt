@@ -1,6 +1,6 @@
 # nom du projet gsl-light
 PROJECT(gsl-light)
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)
 
 FILE(GLOB gsl-vector_CXX vector/*.c)
 FILE(GLOB gsl-vector_HXX vector/*.h)
