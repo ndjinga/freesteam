@@ -25,55 +25,55 @@
 #include <math.h>
 #include <float.h>
 
-#include <gsl/gsl_math.h>
-#include <gsl/gsl_errno.h>
+#include <math.h>//<gsl/gsl_math.h>
+#include <errno.h>//<gsl/gsl_errno.h>
 #include <gsl/gsl_multiroots.h>
 #include <gsl/gsl_linalg.h>
 
 typedef struct
   {
-    gsl_matrix * lu;
-    gsl_permutation * permutation;
+    double * lu;//gsl_matrix
+    int * permutation;//gsl_permutation
   }
 newton_state_t;
 
 static int newton_alloc (void * vstate, size_t n);
-static int newton_set (void * vstate, gsl_multiroot_function_fdf * fdf, gsl_vector * x, gsl_vector * f, gsl_matrix * J, gsl_vector * dx);
-static int newton_iterate (void * vstate, gsl_multiroot_function_fdf * fdf, gsl_vector * x, gsl_vector * f, gsl_matrix * J, gsl_vector * dx);
+static int newton_set (void * vstate, gsl_multiroot_function_fdf * fdf, double * x, double * f, double * J, double * dx);
+static int newton_iterate (void * vstate, gsl_multiroot_function_fdf * fdf, double * x, double * f, double * J, double * dx);
 static void newton_free (void * vstate);
 
 static int
 newton_alloc (void * vstate, size_t n)
 {
   newton_state_t * state = (newton_state_t *) vstate;
-  gsl_permutation * p;
-  gsl_matrix * m;
+  int * p;//gsl_permutation
+  double * m;//gsl_matrix
 
-  m = gsl_matrix_calloc (n,n);
+  m = calloc (n,n,sizeof(double));//gsl_matrix_calloc(n,n)
   
   if (m == 0) 
     {
-      GSL_ERROR ("failed to allocate space for lu", GSL_ENOMEM);
+      perror ("failed to allocate space for lu");
     }
 
   state->lu = m ;
 
-  p = gsl_permutation_calloc (n);
+  p = calloc(n,n,sizeof(int));//gsl_permutation_calloc(n)
 
   if (p == 0)
     {
-      gsl_matrix_free(m);
+      free(m);
 
-      GSL_ERROR ("failed to allocate space for permutation", GSL_ENOMEM);
+      perror ("failed to allocate space for permutation");
     }
 
   state->permutation = p ;
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 static int 
-newton_set (void * vstate, gsl_multiroot_function_fdf * FDF, gsl_vector * x, gsl_vector * f, gsl_matrix * J, gsl_vector * dx)
+newton_set (void * vstate, gsl_multiroot_function_fdf * FDF, double * x, double * f, double * J, double * dx)
 {
   newton_state_t * state = (newton_state_t *) vstate;
 
@@ -85,14 +85,14 @@ newton_set (void * vstate, gsl_multiroot_function_fdf * FDF, gsl_vector * x, gsl
 
   for (i = 0; i < n; i++)
     {
-      gsl_vector_set (dx, i, 0.0);
+      dx[i] = 0.0;
     }
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 static int
-newton_iterate (void * vstate, gsl_multiroot_function_fdf * fdf, gsl_vector * x, gsl_vector * f, gsl_matrix * J, gsl_vector * dx)
+newton_iterate (void * vstate, gsl_multiroot_function_fdf * fdf, double * x, double * f, double * J, double * dx)
 {
   newton_state_t * state = (newton_state_t *) vstate;
   
@@ -102,7 +102,7 @@ newton_iterate (void * vstate, gsl_multiroot_function_fdf * fdf, gsl_vector * x,
 
   size_t n = fdf->n ;
 
-  gsl_matrix_memcpy (state->lu, J);
+  memcpy (state->lu, J,n*n);//gsl_matrix_memcpy(state->lu, J)
 
   gsl_linalg_LU_decomp (state->lu, state->permutation, &signum);
 
@@ -115,22 +115,22 @@ newton_iterate (void * vstate, gsl_multiroot_function_fdf * fdf, gsl_vector * x,
       
   for (i = 0; i < n; i++)
     {
-      double e = gsl_vector_get (dx, i);
-      double y = gsl_vector_get (x, i);
-      gsl_vector_set (dx, i, -e);
-      gsl_vector_set (x, i, y - e);
+      double e = dx[i];
+      double y = x[i];
+      dx[i] = -e;
+      x[i]  = y - e);
     }
 
   {
     int status = GSL_MULTIROOT_FN_EVAL_F_DF (fdf, x, f, J);
     
-    if (status != GSL_SUCCESS) 
+    if (status != EXIT_SUCCESS) 
       {
-        return GSL_EBADFUNC;
+        return perror ("Problem in function evaluation");
       }
   }
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 
@@ -139,9 +139,9 @@ newton_free (void * vstate)
 {
   newton_state_t * state = (newton_state_t *) vstate;
 
-  gsl_matrix_free(state->lu);
+  free(state->lu);//gsl_matrix_free
 
-  gsl_permutation_free(state->permutation);
+  free(state->permutation);//gsl_permutation_free
 }
 
 
@@ -153,4 +153,3 @@ static const gsl_multiroot_fdfsolver_type newton_type =
  &newton_iterate,
  &newton_free};
 
-const gsl_multiroot_fdfsolver_type  * gsl_multiroot_fdfsolver_newton = &newton_type;
