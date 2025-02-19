@@ -20,7 +20,7 @@
 #include <config.h>
 #include <stdlib.h>
 #include <string.h>
-#include <gsl/gsl_errno.h>
+#include <errno.h>
 #include <gsl/gsl_multiroots.h>
 
 gsl_multiroot_fdfsolver *
@@ -35,76 +35,74 @@ gsl_multiroot_fdfsolver_alloc (const gsl_multiroot_fdfsolver_type * T,
 
   if (s == 0)
     {
-      GSL_ERROR_VAL ("failed to allocate space for multiroot solver struct",
-                        GSL_ENOMEM, 0);
+      perror ("failed to allocate space for multiroot solver struct");
     }
 
-  s->x = gsl_vector_calloc (n);
+  s->x = calloc (n,n,sizeof(double));//gsl_vector_calloc
 
   if (s->x == 0) 
     {
       free (s);
-      GSL_ERROR_VAL ("failed to allocate space for x", GSL_ENOMEM, 0);
+      perror ("failed to allocate space for x");
     }
 
-  s->f = gsl_vector_calloc (n);
+  s->f = calloc (n,n,sizeof(double));//gsl_vector_calloc
 
   if (s->f == 0) 
     {
-      gsl_vector_free (s->x);
+      free (s->x);
       free (s);
-      GSL_ERROR_VAL ("failed to allocate space for f", GSL_ENOMEM, 0);
+      perror ("failed to allocate space for f");
     }
 
-  s->J = gsl_matrix_calloc (n,n);
+  s->J = calloc (n,n,sizeof(double));//gsl_matrix_calloc
 
   if (s->J == 0) 
     {
-      gsl_vector_free (s->x);
-      gsl_vector_free (s->f);
+      free (s->x);
+      free (s->f);
       free (s);
-      GSL_ERROR_VAL ("failed to allocate space for g", GSL_ENOMEM, 0);
+      perror ("failed to allocate space for g");
     }
 
-  s->dx = gsl_vector_calloc (n);
+  s->dx = calloc (n,sizeof(double));//gsl_vector_calloc
 
   if (s->dx == 0) 
     {
-      gsl_matrix_free (s->J);
-      gsl_vector_free (s->x);
-      gsl_vector_free (s->f);
+      free (s->J);
+      free (s->x);
+      free (s->f);
       free (s);
-      GSL_ERROR_VAL ("failed to allocate space for dx", GSL_ENOMEM, 0);
+      perror ("failed to allocate space for dx");
     }
 
   s->state = malloc (T->size);
 
   if (s->state == 0)
     {
-      gsl_vector_free (s->dx);
-      gsl_vector_free (s->x);
-      gsl_vector_free (s->f);
-      gsl_matrix_free (s->J);
+      free (s->dx);
+      free (s->x);
+      free (s->f);
+      free (s->J);
       free (s);         /* exception in constructor, avoid memory leak */
       
-      GSL_ERROR_VAL ("failed to allocate space for multiroot solver state",
-                        GSL_ENOMEM, 0);
+      perror ("failed to allocate space for multiroot solver state");
     }
 
   s->type = T ;
 
   status = (s->type->alloc)(s->state, n);
 
-  if (status != GSL_SUCCESS)
+  if (status != EXIT_SUCCESS)
     {
       free (s->state);
-      gsl_vector_free (s->dx);
-      gsl_vector_free (s->x);
-      gsl_vector_free (s->f);
-      gsl_matrix_free (s->J);
+      free (s->dx);
+      free (s->x);
+      free (s->f);
+      free (s->J);
       free (s);         /* exception in constructor, avoid memory leak */
       
-      GSL_ERROR_VAL ("failed to set solver", status, 0);
+      perror ("failed to set solver");
     }
   
   s->fdf = NULL;
@@ -115,20 +113,20 @@ gsl_multiroot_fdfsolver_alloc (const gsl_multiroot_fdfsolver_type * T,
 int
 gsl_multiroot_fdfsolver_set (gsl_multiroot_fdfsolver * s, 
                              gsl_multiroot_function_fdf * f, 
-                             const gsl_vector * x)
+                             const double * x)
 {
   if (s->x->size != f->n)
     {
-      GSL_ERROR ("function incompatible with solver size", GSL_EBADLEN);
+      perror ("function incompatible with solver size");
     }
   
   if (x->size != f->n) 
     {
-      GSL_ERROR ("vector length not compatible with function", GSL_EBADLEN);
+      perror ("vector length not compatible with function");
     }  
     
   s->fdf = f;
-  gsl_vector_memcpy(s->x,x);
+  memcpy(s->x,x,s->x->size);
   
   return (s->type->set) (s->state, s->fdf, s->x, s->f, s->J, s->dx);
 }
@@ -145,10 +143,10 @@ gsl_multiroot_fdfsolver_free (gsl_multiroot_fdfsolver * s)
   RETURN_IF_NULL (s);
   (s->type->free) (s->state);
   free (s->state);
-  gsl_vector_free (s->dx);
-  gsl_vector_free (s->x);
-  gsl_vector_free (s->f);
-  gsl_matrix_free (s->J);
+  free (s->dx);
+  free (s->x);
+  free (s->f);
+  free (s->J);
   free (s);
 }
 
@@ -158,19 +156,19 @@ gsl_multiroot_fdfsolver_name (const gsl_multiroot_fdfsolver * s)
   return s->type->name;
 }
 
-gsl_vector *
+double *
 gsl_multiroot_fdfsolver_root (const gsl_multiroot_fdfsolver * s)
 {
   return s->x;
 }
 
-gsl_vector *
+double *
 gsl_multiroot_fdfsolver_dx (const gsl_multiroot_fdfsolver * s)
 {
   return s->dx;
 }
 
-gsl_vector *
+double *
 gsl_multiroot_fdfsolver_f (const gsl_multiroot_fdfsolver * s)
 {
   return s->f;
