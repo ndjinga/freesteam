@@ -54,6 +54,7 @@ newton_alloc (void * vstate, size_t n)
   if (m == 0) 
     {
       perror ("failed to allocate space for lu");
+      return EXIT_FAILURE;
     }
 
   state->lu = m ;
@@ -65,6 +66,7 @@ newton_alloc (void * vstate, size_t n)
       free(m);
 
       perror ("failed to allocate space for permutation");
+      return EXIT_FAILURE;
     }
 
   state->permutation = p ;
@@ -96,29 +98,41 @@ newton_iterate (void * vstate, gsl_multiroot_function_fdf * fdf, double * x, dou
 {
   newton_state_t * state = (newton_state_t *) vstate;
   
-  int signum;
-
-  size_t i;
+  size_t i;//iteration variable
 
   size_t n = fdf->n ;
 
+  int nrhs=1;//number of right hand side vectors
+
+  int lda=n;//number of lines of the matrix A
+
+  int ldb=n;//number of lines of the RHS b
+
+  int info=0;
+  
   memcpy (state->lu, J,n*n);//gsl_matrix_memcpy(state->lu, J)
 
-  gsl_linalg_LU_decomp (state->lu, state->permutation, &signum);
+  dgesv_( &n, &nrhs, state->lu, &lda, state->permutation, f, &ldb, &info);
+  
+  if (info<0)
+    {
+      printf("Argument %i had an illegal value", -info);
+      perror("Invalid argument (illegal value)" ); 
+      return EXIT_FAILURE;
+    }
+  else if (info>0)
+    {
+      perror(" The factorization LU has been completed, but the factor U is exactly singular, so the solution could not be computed " ); 
+      return EXIT_FAILURE;
+    }
 
-  {
-    int status = gsl_linalg_LU_solve (state->lu, state->permutation, f, dx);
-
-    if (status)
-      return status;
-  }   
-      
+  //Change sign of vector dx      
   for (i = 0; i < n; i++)
     {
       double e = dx[i];
       double y = x[i];
       dx[i] = -e;
-      x[i]  = y - e);
+      x[i]  = y - e;
     }
 
   {
@@ -126,7 +140,8 @@ newton_iterate (void * vstate, gsl_multiroot_function_fdf * fdf, double * x, dou
     
     if (status != EXIT_SUCCESS) 
       {
-        return perror ("Problem in function evaluation");
+        perror ("Problem in function evaluation");
+        return EXIT_FAILURE;
       }
   }
 
@@ -153,3 +168,4 @@ static const gsl_multiroot_fdfsolver_type newton_type =
  &newton_iterate,
  &newton_free};
 
+const gsl_multiroot_fdfsolver_type  * gsl_multiroot_fdfsolver_newton = &newton_type;

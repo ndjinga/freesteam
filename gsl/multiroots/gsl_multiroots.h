@@ -23,6 +23,9 @@
 #include <stdlib.h>
 #include <math.h>
 
+extern "C" void dgesv_(int *n, int *nrhs, double *a, int 
+	*lda, int *ipiv, double *b, int *ldb, int *info);
+
 /* Definition of vector-valued functions and gradient with parameters
    based on double */
 
@@ -88,5 +91,10 @@ int gsl_multiroot_test_delta (const double * dx, const double * x,
                               double epsabs, double epsrel);
 
 int gsl_multiroot_test_residual (const double * f, double epsabs);
+
+GSL_VAR const gsl_multiroot_fdfsolver_type * gsl_multiroot_fdfsolver_newton;
+GSL_VAR const gsl_multiroot_fdfsolver_type * gsl_multiroot_fdfsolver_gnewton;
+GSL_VAR const gsl_multiroot_fdfsolver_type * gsl_multiroot_fdfsolver_hybridj;
+GSL_VAR const gsl_multiroot_fdfsolver_type * gsl_multiroot_fdfsolver_hybridsj;
 
 #endif /* __MULTIROOTS_H__ */
