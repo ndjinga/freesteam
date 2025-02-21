@@ -92,9 +92,9 @@ int gsl_multiroot_test_delta (const double * dx, const double * x,
 
 int gsl_multiroot_test_residual (const double * f, double epsabs);
 
-GSL_VAR const gsl_multiroot_fdfsolver_type * gsl_multiroot_fdfsolver_newton;
-GSL_VAR const gsl_multiroot_fdfsolver_type * gsl_multiroot_fdfsolver_gnewton;
-GSL_VAR const gsl_multiroot_fdfsolver_type * gsl_multiroot_fdfsolver_hybridj;
-GSL_VAR const gsl_multiroot_fdfsolver_type * gsl_multiroot_fdfsolver_hybridsj;
+extern const gsl_multiroot_fdfsolver_type * gsl_multiroot_fdfsolver_newton;
+extern const gsl_multiroot_fdfsolver_type * gsl_multiroot_fdfsolver_gnewton;
+extern const gsl_multiroot_fdfsolver_type * gsl_multiroot_fdfsolver_hybridj;
+extern const gsl_multiroot_fdfsolver_type * gsl_multiroot_fdfsolver_hybridsj;
 
 #endif /* __MULTIROOTS_H__ */
