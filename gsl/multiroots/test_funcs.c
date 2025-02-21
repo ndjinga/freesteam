@@ -19,7 +19,6 @@
 
 #include <config.h>
 #include <math.h>
-#include <gsl/gsl_vector.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_multiroots.h>
 
@@ -42,57 +41,57 @@ gsl_multiroot_function_fdf rosenbrock =
  2, 0};
 
 void
-rosenbrock_initpt (gsl_vector * x)
+rosenbrock_initpt (double * x)
 {
-  gsl_vector_set (x, 0, -1.2);
-  gsl_vector_set (x, 1, 1.0);
+  x[0] = -1.2;
+  x[1] =  1.0;
 }
 
 int
-rosenbrock_f (const gsl_vector * x, void *params, gsl_vector * f)
+rosenbrock_f (const double * x, void *params, double * f)
 {
-  double x0 = gsl_vector_get (x, 0);
-  double x1 = gsl_vector_get (x, 1);
+  double x0 = x[0];
+  double x1 = x[1];
 
   double y0 = 1 - x0;
   double y1 = 10 * (x1 - x0 * x0);
 
-  gsl_vector_set (f, 0, y0);
-  gsl_vector_set (f, 1, y1);
+  f[0] = y0;
+  f[1] = y1;
 
   params = 0;                   /* avoid warning about unused parameters */
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 int
-rosenbrock_df (const gsl_vector * x, void *params, gsl_matrix * df)
+rosenbrock_df (const double * x, void *params, gsl_matrix * df)
 {
-  double x0 = gsl_vector_get (x, 0);
+  double x0 = x[0];
 
   double df00 = -1;
   double df01 = 0;
   double df10 = -20 * x0;
   double df11 = 10;
 
-  gsl_matrix_set (df, 0, 0, df00);
-  gsl_matrix_set (df, 0, 1, df01);
-  gsl_matrix_set (df, 1, 0, df10);
-  gsl_matrix_set (df, 1, 1, df11);
+  df[0, 0] = df00;
+  df[0, 1] = df01;
+  df[1, 0] = df10;
+  df[1, 1] = df11;
 
   params = 0;                   /* avoid warning about unused parameters */
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 int
-rosenbrock_fdf (const gsl_vector * x, void *params,
-                gsl_vector * f, gsl_matrix * df)
+rosenbrock_fdf (const double * x, void *params,
+                double * f, gsl_matrix * df)
 {
   rosenbrock_f (x, params, f);
   rosenbrock_df (x, params, df);
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 
@@ -105,17 +104,17 @@ gsl_multiroot_function_fdf roth =
  2, 0};
 
 void
-roth_initpt (gsl_vector * x)
+roth_initpt (double * x)
 {
-  gsl_vector_set (x, 0, 4.5);  /* changed from the value in the paper */
-  gsl_vector_set (x, 1, 3.5);  /* otherwise the problem is too hard */
+  x[0] = 4.5;  /* changed from the value in the paper */
+  x[1] = 3.5;  /* otherwise the problem is too hard */
 }
 
 int
-roth_f (const gsl_vector * x, void *params, gsl_vector * f)
+roth_f (const double * x, void *params, double * f)
 {
-  double x0 = gsl_vector_get (x, 0);
-  double x1 = gsl_vector_get (x, 1);
+  double x0 = x[0];
+  double x1 = x[1];
 
   double y0 = -13.0 + x0 + ((5.0 - x1)*x1 - 2.0)*x1;
   double y1 = -29.0 + x0 + ((x1 + 1.0)*x1 - 14.0)*x1;
@@ -125,13 +124,13 @@ roth_f (const gsl_vector * x, void *params, gsl_vector * f)
 
   params = 0;                   /* avoid warning about unused parameters */
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 int
-roth_df (const gsl_vector * x, void *params, gsl_matrix * df)
+roth_df (const double * x, void *params, gsl_matrix * df)
 {
-  double x1 = gsl_vector_get (x, 1);
+  double x1 = x[1];
 
   double df00 = 1;
   double df01 = -3 * x1 * x1 + 10 * x1 - 2;
@@ -145,17 +144,17 @@ roth_df (const gsl_vector * x, void *params, gsl_matrix * df)
 
   params = 0;                   /* avoid warning about unused parameters */
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 int
-roth_fdf (const gsl_vector * x, void *params,
-                gsl_vector * f, gsl_matrix * df)
+roth_fdf (const double * x, void *params,
+                double * f, gsl_matrix * df)
 {
   roth_f (x, params, f);
   roth_df (x, params, df);
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 
@@ -169,17 +168,17 @@ gsl_multiroot_function_fdf powellscal =
  2, 0};
 
 void
-powellscal_initpt (gsl_vector * x)
+powellscal_initpt (double * x)
 {
-  gsl_vector_set (x, 0, 0.0);
-  gsl_vector_set (x, 1, 1.0);
+  x[0]= 0.0;
+  x[1]= 1.0;
 }
 
 int
-powellscal_f (const gsl_vector * x, void *params, gsl_vector * f)
+powellscal_f (const double * x, void *params, double * f)
 {
-  double x0 = gsl_vector_get (x, 0);
-  double x1 = gsl_vector_get (x, 1);
+  double x0 = x[0];
+  double x1 = x[1];
 
   double y0 = 10000.0 * x0 * x1 - 1.0;
   double y1 = exp (-x0) + exp (-x1) - 1.0001;
@@ -189,14 +188,14 @@ powellscal_f (const gsl_vector * x, void *params, gsl_vector * f)
 
   params = 0;                   /* avoid warning about unused parameters */
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 int
-powellscal_df (const gsl_vector * x, void *params, gsl_matrix * df)
+powellscal_df (const double * x, void *params, gsl_matrix * df)
 {
-  double x0 = gsl_vector_get (x, 0);
-  double x1 = gsl_vector_get (x, 1);
+  double x0 = x[0];
+  double x1 = x[1];
 
   double df00 = 10000.0 * x1, df01 = 10000.0 * x0;
   double df10 = -exp (-x0), df11 = -exp (-x1);
@@ -208,17 +207,17 @@ powellscal_df (const gsl_vector * x, void *params, gsl_matrix * df)
 
   params = 0;                   /* avoid warning about unused parameters */
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 int
-powellscal_fdf (const gsl_vector * x, void *params,
-                  gsl_vector * f, gsl_matrix * df)
+powellscal_fdf (const double * x, void *params,
+                  double * f, gsl_matrix * df)
 {
   powellscal_f (x, params, f);
   powellscal_df (x, params, df);
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 
@@ -231,17 +230,17 @@ gsl_multiroot_function_fdf brownscal =
  2, 0};
 
 void
-brownscal_initpt (gsl_vector * x)
+brownscal_initpt (double * x)
 {
-  gsl_vector_set (x, 0, 1.0);
-  gsl_vector_set (x, 1, 1.0);
+  x[0]= 1.0;
+  x[1]= 1.0;
 }
 
 int
-brownscal_f (const gsl_vector * x, void *params, gsl_vector * f)
+brownscal_f (const double * x, void *params, double * f)
 {
-  double x0 = gsl_vector_get (x, 0);
-  double x1 = gsl_vector_get (x, 1);
+  double x0 = x[0];
+  double x1 = x[1];
 
   double y0 = x0 - 1e6;
   double y1 = x0 * x1 - 2;
@@ -251,14 +250,14 @@ brownscal_f (const gsl_vector * x, void *params, gsl_vector * f)
 
   params = 0;                   /* avoid warning about unused parameters */
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 int
-brownscal_df (const gsl_vector * x, void *params, gsl_matrix * df)
+brownscal_df (const double * x, void *params, gsl_matrix * df)
 {
-  double x0 = gsl_vector_get (x, 0);
-  double x1 = gsl_vector_get (x, 1);
+  double x0 = x[0];
+  double x1 = x[1];
 
   double df00 = 1.0, df01 = 0.0;
   double df10 = x1, df11 = x0;
@@ -270,17 +269,17 @@ brownscal_df (const gsl_vector * x, void *params, gsl_matrix * df)
 
   params = 0;                   /* avoid warning about unused parameters */
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 int
-brownscal_fdf (const gsl_vector * x, void *params,
-                  gsl_vector * f, gsl_matrix * df)
+brownscal_fdf (const double * x, void *params,
+                  double * f, gsl_matrix * df)
 {
   brownscal_f (x, params, f);
   brownscal_df (x, params, df);
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 
@@ -293,21 +292,21 @@ gsl_multiroot_function_fdf powellsing =
  4, 0};
 
 void
-powellsing_initpt (gsl_vector * x)
+powellsing_initpt (double * x)
 {
-  gsl_vector_set (x, 0, 3.0);
-  gsl_vector_set (x, 1, -1.0);
-  gsl_vector_set (x, 2, 0.0);
-  gsl_vector_set (x, 3, 1.0);
+  x[0]= 3.0;
+  x[1]= -1.0;
+  x[2]= 0.0;
+  x[3]= 1.0;
 }
 
 int
-powellsing_f (const gsl_vector * x, void *params, gsl_vector * f)
+powellsing_f (const double * x, void *params, double * f)
 {
-  double x0 = gsl_vector_get (x, 0);
-  double x1 = gsl_vector_get (x, 1);
-  double x2 = gsl_vector_get (x, 2);
-  double x3 = gsl_vector_get (x, 3);
+  double x0 = x[0];
+  double x1 = x[1];
+  double x2 = x[2];
+  double x3 = x[3];
 
   double y0 = x0 + 10 * x1;
   double y1 = sqrt (5.0) * (x2 - x3);
@@ -321,16 +320,16 @@ powellsing_f (const gsl_vector * x, void *params, gsl_vector * f)
 
   params = 0;                   /* avoid warning about unused parameters */
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 int
-powellsing_df (const gsl_vector * x, void *params, gsl_matrix * df)
+powellsing_df (const double * x, void *params, gsl_matrix * df)
 {
-  double x0 = gsl_vector_get (x, 0);
-  double x1 = gsl_vector_get (x, 1);
-  double x2 = gsl_vector_get (x, 2);
-  double x3 = gsl_vector_get (x, 3);
+  double x0 = x[0];
+  double x1 = x[1];
+  double x2 = x[2];
+  double x3 = x[3];
 
   double df00 = 1, df01 = 10, df02 = 0, df03 = 0;
   double df10 = 0, df11 = 0, df12 = sqrt (5.0), df13 = -df12;
@@ -359,17 +358,17 @@ powellsing_df (const gsl_vector * x, void *params, gsl_matrix * df)
 
   params = 0;                   /* avoid warning about unused parameters */
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 int
-powellsing_fdf (const gsl_vector * x, void *params,
-                    gsl_vector * f, gsl_matrix * df)
+powellsing_fdf (const double * x, void *params,
+                    double * f, gsl_matrix * df)
 {
   powellsing_f (x, params, f);
   powellsing_df (x, params, df);
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 
@@ -382,21 +381,21 @@ gsl_multiroot_function_fdf wood =
  4, 0};
 
 void
-wood_initpt (gsl_vector * x)
+wood_initpt (double * x)
 {
-  gsl_vector_set (x, 0, -3.0);
-  gsl_vector_set (x, 1, -1.0);
-  gsl_vector_set (x, 2, -3.0);
-  gsl_vector_set (x, 3, -1.0);
+  x[0]= -3.0;
+  x[1]= -1.0;
+  x[2]= -3.0;
+  x[3]= -1.0;
 }
 
 int
-wood_f (const gsl_vector * x, void *params, gsl_vector * f)
+wood_f (const double * x, void *params, double * f)
 {
-  double x0 = gsl_vector_get (x, 0);
-  double x1 = gsl_vector_get (x, 1);
-  double x2 = gsl_vector_get (x, 2);
-  double x3 = gsl_vector_get (x, 3);
+  double x0 = x[0];
+  double x1 = x[1];
+  double x2 = x[2];
+  double x3 = x[3];
 
   double t1 = x1 - x0 * x0;
   double t2 = x3 - x2 * x2;
@@ -413,16 +412,16 @@ wood_f (const gsl_vector * x, void *params, gsl_vector * f)
 
   params = 0;                   /* avoid warning about unused parameters */
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 int
-wood_df (const gsl_vector * x, void *params, gsl_matrix * df)
+wood_df (const double * x, void *params, gsl_matrix * df)
 {
-  double x0 = gsl_vector_get (x, 0);
-  double x1 = gsl_vector_get (x, 1);
-  double x2 = gsl_vector_get (x, 2);
-  double x3 = gsl_vector_get (x, 3);
+  double x0 = x[0];
+  double x1 = x[1];
+  double x2 = x[2];
+  double x3 = x[3];
 
   double t1 = x1 - 3 * x0 * x0;
   double t2 = x3 - 3 * x2 * x2;
@@ -454,17 +453,17 @@ wood_df (const gsl_vector * x, void *params, gsl_matrix * df)
 
   params = 0;                   /* avoid warning about unused parameters */
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 int
-wood_fdf (const gsl_vector * x, void *params,
-                    gsl_vector * f, gsl_matrix * df)
+wood_fdf (const double * x, void *params,
+                    double * f, gsl_matrix * df)
 {
   wood_f (x, params, f);
   wood_df (x, params, df);
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 
@@ -477,19 +476,19 @@ gsl_multiroot_function_fdf helical =
  3, 0};
 
 void
-helical_initpt (gsl_vector * x)
+helical_initpt (double * x)
 {
-  gsl_vector_set (x, 0, -1.0);
-  gsl_vector_set (x, 1, 0.0);
-  gsl_vector_set (x, 2, 0.0);
+  x[0]= -1.0;
+  x[1]= 0.0;
+  x[2]= 0.0;
 }
 
 int
-helical_f (const gsl_vector * x, void *params, gsl_vector * f)
+helical_f (const double * x, void *params, double * f)
 {
-  double x0 = gsl_vector_get (x, 0);
-  double x1 = gsl_vector_get (x, 1);
-  double x2 = gsl_vector_get (x, 2);
+  double x0 = x[0];
+  double x1 = x[1];
+  double x2 = x[2];
 
   double t1, t2;
   double y0, y1, y2;
@@ -519,14 +518,14 @@ helical_f (const gsl_vector * x, void *params, gsl_vector * f)
 
   params = 0;                   /* avoid warning about unused parameters */
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 int
-helical_df (const gsl_vector * x, void *params, gsl_matrix * df)
+helical_df (const double * x, void *params, gsl_matrix * df)
 {
-  double x0 = gsl_vector_get (x, 0);
-  double x1 = gsl_vector_get (x, 1);
+  double x0 = x[0];
+  double x1 = x[1];
 
   double t = x0 * x0 + x1 * x1 ;
   double t1 = 2 * M_PI * t ;
@@ -550,17 +549,17 @@ helical_df (const gsl_vector * x, void *params, gsl_matrix * df)
 
   params = 0;                   /* avoid warning about unused parameters */
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 int
-helical_fdf (const gsl_vector * x, void *params,
-                    gsl_vector * f, gsl_matrix * df)
+helical_fdf (const double * x, void *params,
+                    double * f, gsl_matrix * df)
 {
   helical_f (x, params, f);
   helical_df (x, params, df);
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 
@@ -575,7 +574,7 @@ gsl_multiroot_function_fdf dbv =
  N, 0};
 
 void
-dbv_initpt (gsl_vector * x)
+dbv_initpt (double * x)
 {
   size_t i;
   double h = 1.0 / (N + 1.0);
@@ -584,12 +583,12 @@ dbv_initpt (gsl_vector * x)
     {
       double t = (i + 1) * h;
       double z = t * (t - 1);
-      gsl_vector_set (x, i, z);
+      x[i]= z;
     }
 }
 
 int
-dbv_f (const gsl_vector * x, void *params, gsl_vector * f)
+dbv_f (const double * x, void *params, double * f)
 {
   size_t i;
 
@@ -600,13 +599,13 @@ dbv_f (const gsl_vector * x, void *params, gsl_vector * f)
       double z, ti = (i + 1) * h;
       double xi = 0, xim1 = 0, xip1 = 0;
 
-      xi = gsl_vector_get (x, i);
+      xi = x[i];
       
       if (i > 0)
-        xim1 = gsl_vector_get (x, i - 1);
+        xim1 = x[i - 1);
 
       if (i < N - 1)
-        xip1 = gsl_vector_get (x, i + 1);
+        xip1 = x[i + 1);
 
       z = 2 * xi - xim1 - xip1 + h * h * pow(xi + ti + 1, 3.0) / 2.0;
 
@@ -616,11 +615,11 @@ dbv_f (const gsl_vector * x, void *params, gsl_vector * f)
 
   params = 0;                   /* avoid warning about unused parameters */
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 int
-dbv_df (const gsl_vector * x, void *params, gsl_matrix * df)
+dbv_df (const double * x, void *params, gsl_matrix * df)
 {
   size_t i, j;
 
@@ -634,7 +633,7 @@ dbv_df (const gsl_vector * x, void *params, gsl_matrix * df)
     {
       double dz_dxi, ti = (i + 1) * h;
 
-      double xi = gsl_vector_get (x, i);
+      double xi = x[i];
       
       dz_dxi = 2.0 + (3.0 / 2.0) * h * h * pow(xi + ti + 1, 2.0) ;
       
@@ -650,17 +649,17 @@ dbv_df (const gsl_vector * x, void *params, gsl_matrix * df)
 
   params = 0;                   /* avoid warning about unused parameters */
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 int
-dbv_fdf (const gsl_vector * x, void *params,
-                    gsl_vector * f, gsl_matrix * df)
+dbv_fdf (const double * x, void *params,
+                    double * f, gsl_matrix * df)
 {
   dbv_f (x, params, f);
   dbv_df (x, params, df);
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 /* Trigonometric Function */
@@ -672,30 +671,30 @@ gsl_multiroot_function_fdf trig =
  N, 0};
 
 void
-trig_initpt (gsl_vector * x)
+trig_initpt (double * x)
 {
   size_t i;
 
   for (i = 0; i < N; i++)       /* choose an initial point which converges */
     {
-      gsl_vector_set (x, i, 0.05);   
+      x[i]= 0.05;   
     }
 }
 
 int
-trig_f (const gsl_vector * x, void *params, gsl_vector * f)
+trig_f (const double * x, void *params, double * f)
 {
   size_t i;
   double sum = 0;
 
   for (i = 0; i < N; i++)
     {
-      sum += cos(gsl_vector_get(x,i));
+      sum += cos(x[i]);
     }
 
   for (i = 0; i < N; i++)
     {
-      double xi = gsl_vector_get (x,i);
+      double xi = x[i];
       double z = N - sum + (i + 1) * (1 - cos(xi)) - sin(xi);
 
       gsl_vector_set (f, i, z);
@@ -703,11 +702,11 @@ trig_f (const gsl_vector * x, void *params, gsl_vector * f)
 
   params = 0;                   /* avoid warning about unused parameters */
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 int
-trig_df (const gsl_vector * x, void *params, gsl_matrix * df)
+trig_df (const double * x, void *params, gsl_matrix * df)
 {
   size_t i, j;
 
@@ -716,8 +715,8 @@ trig_df (const gsl_vector * x, void *params, gsl_matrix * df)
       for (j = 0; j < N; j++)
         {
           double dz;
-          double xi = gsl_vector_get(x, i);
-          double xj = gsl_vector_get(x, j);
+          double xi = x[i];
+          double xj = x[j];
 
           if (j == i)
             dz = sin(xi) + (i + 1) * sin(xi) - cos(xi);
@@ -730,15 +729,15 @@ trig_df (const gsl_vector * x, void *params, gsl_matrix * df)
 
   params = 0;                   /* avoid warning about unused parameters */
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 int
-trig_fdf (const gsl_vector * x, void *params,
-                    gsl_vector * f, gsl_matrix * df)
+trig_fdf (const double * x, void *params,
+                    double * f, gsl_matrix * df)
 {
   trig_f (x, params, f);
   trig_df (x, params, df);
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }

@@ -20,7 +20,6 @@
 #include <config.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <gsl/gsl_vector.h>
 #include <gsl/gsl_test.h>
 #include <gsl/gsl_multiroots.h>
 
@@ -28,25 +27,15 @@
 
 #include "test_funcs.h"
 int test_fdf (const char * desc, gsl_multiroot_function_fdf * function, initpt_function initpt, double factor, const gsl_multiroot_fdfsolver_type * T);
-int test_f (const char * desc, gsl_multiroot_function_fdf * fdf, initpt_function initpt, double factor, const gsl_multiroot_fsolver_type * T);
 
 
 int 
 main (void)
 {
-  const gsl_multiroot_fsolver_type * fsolvers[5] ;
-  const gsl_multiroot_fsolver_type ** T1 ;
-
   const gsl_multiroot_fdfsolver_type * fdfsolvers[5] ;
   const gsl_multiroot_fdfsolver_type ** T2 ;
 
   double f;
-
-  fsolvers[0] = gsl_multiroot_fsolver_dnewton;
-  fsolvers[1] = gsl_multiroot_fsolver_broyden;
-  fsolvers[2] = gsl_multiroot_fsolver_hybrid;
-  fsolvers[3] = gsl_multiroot_fsolver_hybrids;
-  fsolvers[4] = 0;
 
   fdfsolvers[0] = gsl_multiroot_fdfsolver_newton;
   fdfsolvers[1] = gsl_multiroot_fdfsolver_gnewton;
@@ -58,22 +47,6 @@ main (void)
 
 
   f = 1.0 ;
-  
-  T1 = fsolvers ;
-  
-  while (*T1 != 0) 
-    {
-      test_f ("Rosenbrock", &rosenbrock, rosenbrock_initpt, f, *T1);
-      test_f ("Roth", &roth, roth_initpt, f, *T1);
-      test_f ("Powell badly scaled", &powellscal, powellscal_initpt, f, *T1);
-      test_f ("Brown badly scaled", &brownscal, brownscal_initpt, f, *T1);
-      test_f ("Powell singular", &powellsing, powellsing_initpt, f, *T1);
-      test_f ("Wood", &wood, wood_initpt, f, *T1);
-      test_f ("Helical", &helical, helical_initpt, f, *T1);
-      test_f ("Discrete BVP", &dbv, dbv_initpt, f, *T1);
-      test_f ("Trig", &trig, trig_initpt, f, *T1);
-      T1++;
-    }
   
   T2 = fdfsolvers ;
   
@@ -94,10 +67,10 @@ main (void)
   exit (gsl_test_summary ());
 }
 
-void scale (gsl_vector * x, double factor);
+void scale (double * x, double factor);
 
 void
-scale (gsl_vector * x, double factor)
+scale (double * x, double factor)
 {
   size_t i, n = x->size;
 
@@ -105,15 +78,15 @@ scale (gsl_vector * x, double factor)
     {
       for (i = 0; i < n; i++)
         {
-          gsl_vector_set (x, i, factor);
+          x[i] = factor;
         }
     }
   else
     {
       for (i = 0; i < n; i++)
         {
-          double xi = gsl_vector_get(x, i);
-          gsl_vector_set(x, i, factor * xi);
+          double xi = x[i];
+          x[i] = factor * xi;
         }
     } 
 }
@@ -127,7 +100,7 @@ test_fdf (const char * desc, gsl_multiroot_function_fdf * function,
   double residual = 0;
   size_t i, n = function->n, iter = 0;
   
-  gsl_vector *x = gsl_vector_alloc (n);
+  double *x = malloc (n*sizeof(double));
   gsl_matrix *J = gsl_matrix_alloc (n, n);
 
   gsl_multiroot_fdfsolver *s;
@@ -157,104 +130,17 @@ test_fdf (const char * desc, gsl_multiroot_function_fdf * function,
 #endif
 
 
-#ifdef TEST_JACOBIAN
- {
-    double r,sum; size_t j;
-
-    gsl_multiroot_function f1 ;
-    f1.f = function->f ;
-    f1.n = function->n ;
-    f1.params = function->params ;
-    
-    gsl_multiroot_fdjacobian (&f1, s->x, s->f, GSL_SQRT_DBL_EPSILON, J);
-  
-    /* compare J and s->J */
-    
-    r=0;sum=0;
-    for (i = 0; i < n; i++)
-      for (j = 0; j< n ; j++)
-        {
-          double u = gsl_matrix_get(J,i,j);
-          double su = gsl_matrix_get(s->J, i, j);
-          r = fabs(u - su)/(1e-6 + 1e-6 * fabs(u)); sum+=r;
-          if (fabs(u - su) > 1e-6 + 1e-6 * fabs(u))
-            printf("broken jacobian %g\n", r);
-        }
-    printf("avg r = %g\n", sum/(n*n));
-  }
-#endif
-
   for (i = 0; i < n ; i++)
     {
-      residual += fabs(gsl_vector_get(s->f, i));
+      residual += fabs(s->f[i]);
     }
 
   gsl_multiroot_fdfsolver_free (s);
-  gsl_matrix_free(J);
-  gsl_vector_free(x);
+  free(J);
+  free(x);
 
   gsl_test(status, "%s on %s (%g), %u iterations, residual = %.2g", T->name, desc, factor, iter, residual);
 
   return status;
 }
 
-
-int
-test_f (const char * desc, gsl_multiroot_function_fdf * fdf, 
-        initpt_function initpt, double factor,
-        const gsl_multiroot_fsolver_type * T)
-{
-  int status;
-  size_t i, n = fdf->n, iter = 0;
-  double residual = 0;
-
-  gsl_vector *x;
-
-  gsl_multiroot_fsolver *s;
-  gsl_multiroot_function function;
-
-  function.f = fdf->f;
-  function.params = fdf->params;
-  function.n = n ;
-
-  x = gsl_vector_alloc (n);
-
-  (*initpt) (x);
-
-  if (factor != 1.0) scale(x, factor);
-
-  s = gsl_multiroot_fsolver_alloc (T, n);
-  gsl_multiroot_fsolver_set (s, &function, x);
-
-/*   printf("x "); gsl_vector_fprintf (stdout, s->x, "%g"); printf("\n"); */
-/*   printf("f "); gsl_vector_fprintf (stdout, s->f, "%g"); printf("\n"); */
-
-  do
-    {
-      iter++;
-      status = gsl_multiroot_fsolver_iterate (s);
-      
-      if (status)
-        break ;
-
-      status = gsl_multiroot_test_residual (s->f, 0.0000001);
-    }
-  while (status == GSL_CONTINUE && iter < 1000);
-
-#ifdef DEBUG
-  printf("x "); gsl_vector_fprintf (stdout, s->x, "%g"); printf("\n");
-  printf("f "); gsl_vector_fprintf (stdout, s->f, "%g"); printf("\n");
-#endif
-
-  for (i = 0; i < n ; i++)
-    {
-      residual += fabs(gsl_vector_get(s->f, i));
-    }
-
-  gsl_multiroot_fsolver_free (s);
-  gsl_vector_free(x);
-
-  gsl_test(status, "%s on %s (%g), %u iterations, residual = %.2g", T->name, desc, factor, iter, residual);
-
-  return status;
-}
