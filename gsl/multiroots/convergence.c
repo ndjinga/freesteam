@@ -18,12 +18,12 @@
  */
 
 #include <config.h>
-#include <gsl/gsl_math.h>
-#include <gsl/gsl_errno.h>
+#include <math.h>
+#include <errno.h>
 #include <gsl/gsl_multiroots.h>
 
 int
-gsl_multiroot_test_delta (const gsl_vector * dx, const gsl_vector * x, 
+gsl_multiroot_test_delta (const double * dx, const double * x, 
                      double epsabs, double epsrel)
 {
   size_t i;
@@ -32,13 +32,14 @@ gsl_multiroot_test_delta (const gsl_vector * dx, const gsl_vector * x,
 
   if (epsrel < 0.0)
     {
-      GSL_ERROR ("relative tolerance is negative", GSL_EBADTOL);
+      perror ("relative tolerance is negative");
+      return EXIT_FAILURE;
     }
 
   for (i = 0 ; i < n ; i++)
     {
-      double xi = gsl_vector_get(x,i);
-      double dxi = gsl_vector_get(dx,i);
+      double xi = x[i];
+      double dxi = dx[i];
       double tolerance = epsabs + epsrel * fabs(xi)  ;
 
       if (fabs(dxi) < tolerance || dxi == 0)
@@ -53,13 +54,13 @@ gsl_multiroot_test_delta (const gsl_vector * dx, const gsl_vector * x,
     }
 
   if (ok)
-    return GSL_SUCCESS ;
+    return EXIT_SUCCESS ;
 
-  return GSL_CONTINUE;
+  return EXIT_SUCCESS;
 }
 
 int
-gsl_multiroot_test_residual (const gsl_vector * f, double epsabs)
+gsl_multiroot_test_residual (const double * f, double epsabs)
 {
   size_t i;
 
@@ -69,12 +70,13 @@ gsl_multiroot_test_residual (const gsl_vector * f, double epsabs)
 
   if (epsabs < 0.0)
     {
-      GSL_ERROR ("absolute tolerance is negative", GSL_EBADTOL);
+      perror ("absolute tolerance is negative");
+      return EXIT_FAILURE;
     }
  
   for (i = 0 ; i < n ; i++)
     {
-      double fi = gsl_vector_get(f, i);
+      double fi = f[i];
       
       residual += fabs(fi);
     }
@@ -82,9 +84,9 @@ gsl_multiroot_test_residual (const gsl_vector * f, double epsabs)
 
   if (residual < epsabs)
     {
-      return GSL_SUCCESS;
+      return EXIT_SUCCESS;
     }
   
-  return GSL_CONTINUE ;
+  return EXIT_SUCCESS ;
 }
 
