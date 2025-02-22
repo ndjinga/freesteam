@@ -38,7 +38,7 @@ gsl_multiroot_fdfsolver_alloc (const gsl_multiroot_fdfsolver_type * T,
       perror ("failed to allocate space for multiroot solver struct");
     }
 
-  s->x = calloc (n,n,sizeof(double));//gsl_vector_calloc
+  s->x = calloc (n,sizeof(double));//gsl_vector_calloc
 
   if (s->x == 0) 
     {
@@ -46,7 +46,7 @@ gsl_multiroot_fdfsolver_alloc (const gsl_multiroot_fdfsolver_type * T,
       perror ("failed to allocate space for x");
     }
 
-  s->f = calloc (n,n,sizeof(double));//gsl_vector_calloc
+  s->f = calloc (n,sizeof(double));//gsl_vector_calloc
 
   if (s->f == 0) 
     {

@@ -56,7 +56,7 @@ gsl_multiroot_test_delta (const double * dx, const double * x,
   if (ok)
     return EXIT_SUCCESS ;
 
-  return EXIT_SUCCESS;
+  return EXIT_SUCCESS;//previously GSL_CONTINUE
 }
 
 int
@@ -87,6 +87,6 @@ gsl_multiroot_test_residual (const double * f, double epsabs)
       return EXIT_SUCCESS;
     }
   
-  return EXIT_SUCCESS ;
+  return EXIT_SUCCESS ;//previously GSL_CONTINUE
 }
 

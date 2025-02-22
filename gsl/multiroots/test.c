@@ -100,8 +100,8 @@ test_fdf (const char * desc, gsl_multiroot_function_fdf * function,
   double residual = 0;
   size_t i, n = function->n, iter = 0;
   
-  double *x = malloc (n*sizeof(double));
-  gsl_matrix *J = gsl_matrix_alloc (n, n);
+  double *x = malloc (n*sizeof(double));//gsl_vector_alloc (n);
+  double *J = malloc (n*n*sizeof(double));//gsl_matrix_alloc (n, n);
 
   gsl_multiroot_fdfsolver *s;
 
