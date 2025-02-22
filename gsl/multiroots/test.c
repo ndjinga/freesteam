@@ -117,12 +117,12 @@ test_fdf (const char * desc, gsl_multiroot_function_fdf * function,
       iter++;
       status = gsl_multiroot_fdfsolver_iterate (s);
       
-      if (status)
+      if (status == EXIT_SUCCESS)
         break ;
 
       status = gsl_multiroot_test_residual (s->f, 0.0000001);
     }
-  while (status == GSL_CONTINUE && iter < 1000);
+  while (status == EXIT_SUCCESS && iter < 1000);
 
 #ifdef DEBUG
   printf("x "); gsl_vector_fprintf (stdout, s->x, "%g"); printf("\n");

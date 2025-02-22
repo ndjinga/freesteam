@@ -19,7 +19,6 @@
 
 #include <config.h>
 #include <math.h>
-#include <gsl/gsl_matrix.h>
 #include <gsl/gsl_multiroots.h>
 
 #include "test_funcs.h"
@@ -65,7 +64,7 @@ rosenbrock_f (const double * x, void *params, double * f)
 }
 
 int
-rosenbrock_df (const double * x, void *params, gsl_matrix * df)
+rosenbrock_df (const double * x, void *params, double * df)
 {
   double x0 = x[0];
 
@@ -86,7 +85,7 @@ rosenbrock_df (const double * x, void *params, gsl_matrix * df)
 
 int
 rosenbrock_fdf (const double * x, void *params,
-                double * f, gsl_matrix * df)
+                double * f, double * df)
 {
   rosenbrock_f (x, params, f);
   rosenbrock_df (x, params, df);
@@ -119,8 +118,8 @@ roth_f (const double * x, void *params, double * f)
   double y0 = -13.0 + x0 + ((5.0 - x1)*x1 - 2.0)*x1;
   double y1 = -29.0 + x0 + ((x1 + 1.0)*x1 - 14.0)*x1;
 
-  gsl_vector_set (f, 0, y0);
-  gsl_vector_set (f, 1, y1);
+  f[0]= y0;
+  f[1]= y1;
 
   params = 0;                   /* avoid warning about unused parameters */
 
@@ -128,7 +127,7 @@ roth_f (const double * x, void *params, double * f)
 }
 
 int
-roth_df (const double * x, void *params, gsl_matrix * df)
+roth_df (const double * x, void *params, double * df)
 {
   double x1 = x[1];
 
@@ -137,10 +136,10 @@ roth_df (const double * x, void *params, gsl_matrix * df)
   double df10 = 1;
   double df11 = 3 * x1 * x1 + 2 * x1 - 14;
 
-  gsl_matrix_set (df, 0, 0, df00);
-  gsl_matrix_set (df, 0, 1, df01);
-  gsl_matrix_set (df, 1, 0, df10);
-  gsl_matrix_set (df, 1, 1, df11);
+  df[0, 0]= df00;
+  df[0, 1]= df01;
+  df[1, 0]= df10;
+  df[1, 1]= df11;
 
   params = 0;                   /* avoid warning about unused parameters */
 
@@ -149,7 +148,7 @@ roth_df (const double * x, void *params, gsl_matrix * df)
 
 int
 roth_fdf (const double * x, void *params,
-                double * f, gsl_matrix * df)
+                double * f, double * df)
 {
   roth_f (x, params, f);
   roth_df (x, params, df);
@@ -183,8 +182,8 @@ powellscal_f (const double * x, void *params, double * f)
   double y0 = 10000.0 * x0 * x1 - 1.0;
   double y1 = exp (-x0) + exp (-x1) - 1.0001;
 
-  gsl_vector_set (f, 0, y0);
-  gsl_vector_set (f, 1, y1);
+  f[0]= y0;
+  f[1]= y1;
 
   params = 0;                   /* avoid warning about unused parameters */
 
@@ -192,7 +191,7 @@ powellscal_f (const double * x, void *params, double * f)
 }
 
 int
-powellscal_df (const double * x, void *params, gsl_matrix * df)
+powellscal_df (const double * x, void *params, double * df)
 {
   double x0 = x[0];
   double x1 = x[1];
@@ -200,10 +199,10 @@ powellscal_df (const double * x, void *params, gsl_matrix * df)
   double df00 = 10000.0 * x1, df01 = 10000.0 * x0;
   double df10 = -exp (-x0), df11 = -exp (-x1);
 
-  gsl_matrix_set (df, 0, 0, df00);
-  gsl_matrix_set (df, 0, 1, df01);
-  gsl_matrix_set (df, 1, 0, df10);
-  gsl_matrix_set (df, 1, 1, df11);
+  df[0, 0]= df00;
+  df[0, 1]= df01;
+  df[1, 0]= df10;
+  df[1, 1]= df11;
 
   params = 0;                   /* avoid warning about unused parameters */
 
@@ -212,7 +211,7 @@ powellscal_df (const double * x, void *params, gsl_matrix * df)
 
 int
 powellscal_fdf (const double * x, void *params,
-                  double * f, gsl_matrix * df)
+                  double * f, double * df)
 {
   powellscal_f (x, params, f);
   powellscal_df (x, params, df);
@@ -245,8 +244,8 @@ brownscal_f (const double * x, void *params, double * f)
   double y0 = x0 - 1e6;
   double y1 = x0 * x1 - 2;
 
-  gsl_vector_set (f, 0, y0);
-  gsl_vector_set (f, 1, y1);
+  f[0]= y0;
+  f[1]= y1;
 
   params = 0;                   /* avoid warning about unused parameters */
 
@@ -254,7 +253,7 @@ brownscal_f (const double * x, void *params, double * f)
 }
 
 int
-brownscal_df (const double * x, void *params, gsl_matrix * df)
+brownscal_df (const double * x, void *params, double * df)
 {
   double x0 = x[0];
   double x1 = x[1];
@@ -262,10 +261,10 @@ brownscal_df (const double * x, void *params, gsl_matrix * df)
   double df00 = 1.0, df01 = 0.0;
   double df10 = x1, df11 = x0;
 
-  gsl_matrix_set (df, 0, 0, df00);
-  gsl_matrix_set (df, 0, 1, df01);
-  gsl_matrix_set (df, 1, 0, df10);
-  gsl_matrix_set (df, 1, 1, df11);
+  df[0, 0]= df00;
+  df[0, 1]= df01;
+  df[1, 0]= df10;
+  df[1, 1]= df11;
 
   params = 0;                   /* avoid warning about unused parameters */
 
@@ -274,7 +273,7 @@ brownscal_df (const double * x, void *params, gsl_matrix * df)
 
 int
 brownscal_fdf (const double * x, void *params,
-                  double * f, gsl_matrix * df)
+                  double * f, double * df)
 {
   brownscal_f (x, params, f);
   brownscal_df (x, params, df);
@@ -313,10 +312,10 @@ powellsing_f (const double * x, void *params, double * f)
   double y2 = pow (x1 - 2 * x2, 2.0);
   double y3 = sqrt (10.0) * pow (x0 - x3, 2.0);
 
-  gsl_vector_set (f, 0, y0);
-  gsl_vector_set (f, 1, y1);
-  gsl_vector_set (f, 2, y2);
-  gsl_vector_set (f, 3, y3);
+  f[0]= y0;
+  f[1]= y1;
+  f[2]= y2;
+  f[3]= y3;
 
   params = 0;                   /* avoid warning about unused parameters */
 
@@ -324,7 +323,7 @@ powellsing_f (const double * x, void *params, double * f)
 }
 
 int
-powellsing_df (const double * x, void *params, gsl_matrix * df)
+powellsing_df (const double * x, void *params, double * df)
 {
   double x0 = x[0];
   double x1 = x[1];
@@ -336,25 +335,25 @@ powellsing_df (const double * x, void *params, gsl_matrix * df)
   double df20 = 0, df21 = 2 * (x1 - 2 * x2), df22 = -2 * df21, df23 = 0;
   double df30 = 2 * sqrt (10.0) * (x0 - x3), df31 = 0, df32 = 0, df33 = -df30;
 
-  gsl_matrix_set (df, 0, 0, df00);
-  gsl_matrix_set (df, 0, 1, df01);
-  gsl_matrix_set (df, 0, 2, df02);
-  gsl_matrix_set (df, 0, 3, df03);
+  df[0, 0]= df00;
+  df[0, 1]= df01;
+  df[0, 2]= df02;
+  df[0, 3]= df03;
 
-  gsl_matrix_set (df, 1, 0, df10);
-  gsl_matrix_set (df, 1, 1, df11);
-  gsl_matrix_set (df, 1, 2, df12);
-  gsl_matrix_set (df, 1, 3, df13);
+  df[1, 0]= df10;
+  df[1, 1]= df11;
+  df[1, 2]= df12;
+  df[1, 3]= df13;
 
-  gsl_matrix_set (df, 2, 0, df20);
-  gsl_matrix_set (df, 2, 1, df21);
-  gsl_matrix_set (df, 2, 2, df22);
-  gsl_matrix_set (df, 2, 3, df23);
+  df[2, 0]= df20;
+  df[2, 1]= df21;
+  df[2, 2]= df22;
+  df[2, 3]= df23;
 
-  gsl_matrix_set (df, 3, 0, df30);
-  gsl_matrix_set (df, 3, 1, df31);
-  gsl_matrix_set (df, 3, 2, df32);
-  gsl_matrix_set (df, 3, 3, df33);
+  df[3, 0]= df30;
+  df[3, 1]= df31;
+  df[3, 2]= df32;
+  df[3, 3]= df33;
 
   params = 0;                   /* avoid warning about unused parameters */
 
@@ -363,7 +362,7 @@ powellsing_df (const double * x, void *params, gsl_matrix * df)
 
 int
 powellsing_fdf (const double * x, void *params,
-                    double * f, gsl_matrix * df)
+                    double * f, double * df)
 {
   powellsing_f (x, params, f);
   powellsing_df (x, params, df);
@@ -405,10 +404,10 @@ wood_f (const double * x, void *params, double * f)
   double y2 = -180.0 * x2 * t2 - (1 - x2);
   double y3 = 180.0 * t2 + 20.2 * (x3 - 1) + 19.8 * (x1 - 1);
 
-  gsl_vector_set (f, 0, y0);
-  gsl_vector_set (f, 1, y1);
-  gsl_vector_set (f, 2, y2);
-  gsl_vector_set (f, 3, y3);
+  f[0]= y0;
+  f[1]= y1;
+  f[2]= y2;
+  f[3]= y3;
 
   params = 0;                   /* avoid warning about unused parameters */
 
@@ -416,7 +415,7 @@ wood_f (const double * x, void *params, double * f)
 }
 
 int
-wood_df (const double * x, void *params, gsl_matrix * df)
+wood_df (const double * x, void *params, double * df)
 {
   double x0 = x[0];
   double x1 = x[1];
@@ -431,25 +430,25 @@ wood_df (const double * x, void *params, gsl_matrix * df)
   double df20 = 0, df21 = 0, df22 = -180.0 * t2 + 1, df23 = -180.0 * x2;
   double df30 = 0, df31 = 19.8, df32 = -2 * 180 * x2, df33 = 180.0 + 20.2;
 
-  gsl_matrix_set (df, 0, 0, df00);
-  gsl_matrix_set (df, 0, 1, df01);
-  gsl_matrix_set (df, 0, 2, df02);
-  gsl_matrix_set (df, 0, 3, df03);
+  df[0, 0]= df00;
+  df[0, 1]= df01;
+  df[0, 2]= df02;
+  df[0, 3]= df03;
 
-  gsl_matrix_set (df, 1, 0, df10);
-  gsl_matrix_set (df, 1, 1, df11);
-  gsl_matrix_set (df, 1, 2, df12);
-  gsl_matrix_set (df, 1, 3, df13);
+  df[1, 0]= df10;
+  df[1, 1]= df11;
+  df[1, 2]= df12;
+  df[1, 3]= df13;
 
-  gsl_matrix_set (df, 2, 0, df20);
-  gsl_matrix_set (df, 2, 1, df21);
-  gsl_matrix_set (df, 2, 2, df22);
-  gsl_matrix_set (df, 2, 3, df23);
+  df[2, 0]= df20;
+  df[2, 1]= df21;
+  df[2, 2]= df22;
+  df[2, 3]= df23;
 
-  gsl_matrix_set (df, 3, 0, df30);
-  gsl_matrix_set (df, 3, 1, df31);
-  gsl_matrix_set (df, 3, 2, df32);
-  gsl_matrix_set (df, 3, 3, df33);
+  df[3, 0]= df30;
+  df[3, 1]= df31;
+  df[3, 2]= df32;
+  df[3, 3]= df33;
 
   params = 0;                   /* avoid warning about unused parameters */
 
@@ -458,7 +457,7 @@ wood_df (const double * x, void *params, gsl_matrix * df)
 
 int
 wood_fdf (const double * x, void *params,
-                    double * f, gsl_matrix * df)
+                    double * f, double * df)
 {
   wood_f (x, params, f);
   wood_df (x, params, df);
@@ -512,9 +511,9 @@ helical_f (const double * x, void *params, double * f)
   y1 = 10 * (t2 - 1);
   y2 = x2 ;
 
-  gsl_vector_set (f, 0, y0);
-  gsl_vector_set (f, 1, y1);
-  gsl_vector_set (f, 2, y2);
+  f[0]= y0;
+  f[1]= y1;
+  f[2]= y2;
 
   params = 0;                   /* avoid warning about unused parameters */
 
@@ -522,7 +521,7 @@ helical_f (const double * x, void *params, double * f)
 }
 
 int
-helical_df (const double * x, void *params, gsl_matrix * df)
+helical_df (const double * x, void *params, double * df)
 {
   double x0 = x[0];
   double x1 = x[1];
@@ -535,17 +534,17 @@ helical_df (const double * x, void *params, gsl_matrix * df)
   double df10 = 10*x0/t2, df11 = 10*x1/t2, df12 = 0;
   double df20 = 0, df21 = 0, df22 = 1.0;
 
-  gsl_matrix_set (df, 0, 0, df00);
-  gsl_matrix_set (df, 0, 1, df01);
-  gsl_matrix_set (df, 0, 2, df02);
+  df[0, 0]= df00;
+  df[0, 1]= df01;
+  df[0, 2]= df02;
 
-  gsl_matrix_set (df, 1, 0, df10);
-  gsl_matrix_set (df, 1, 1, df11);
-  gsl_matrix_set (df, 1, 2, df12);
+  df[1, 0]= df10;
+  df[1, 1]= df11;
+  df[1, 2]= df12;
 
-  gsl_matrix_set (df, 2, 0, df20);
-  gsl_matrix_set (df, 2, 1, df21);
-  gsl_matrix_set (df, 2, 2, df22);
+  df[2, 0]= df20;
+  df[2, 1]= df21;
+  df[2, 2]= df22;
 
   params = 0;                   /* avoid warning about unused parameters */
 
@@ -554,7 +553,7 @@ helical_df (const double * x, void *params, gsl_matrix * df)
 
 int
 helical_fdf (const double * x, void *params,
-                    double * f, gsl_matrix * df)
+                    double * f, double * df)
 {
   helical_f (x, params, f);
   helical_df (x, params, df);
@@ -609,7 +608,7 @@ dbv_f (const double * x, void *params, double * f)
 
       z = 2 * xi - xim1 - xip1 + h * h * pow(xi + ti + 1, 3.0) / 2.0;
 
-      gsl_vector_set (f, i, z);
+      f[i]= z;
 
     }
 
@@ -619,7 +618,7 @@ dbv_f (const double * x, void *params, double * f)
 }
 
 int
-dbv_df (const double * x, void *params, gsl_matrix * df)
+dbv_df (const double * x, void *params, double * df)
 {
   size_t i, j;
 
@@ -627,7 +626,7 @@ dbv_df (const double * x, void *params, gsl_matrix * df)
 
   for (i = 0; i < N; i++)
     for (j = 0; j < N; j++)
-      gsl_matrix_set (df, i, j, 0.0);
+      df[i, j, 0.0);
 
   for (i = 0; i < N; i++)
     {
@@ -637,13 +636,13 @@ dbv_df (const double * x, void *params, gsl_matrix * df)
       
       dz_dxi = 2.0 + (3.0 / 2.0) * h * h * pow(xi + ti + 1, 2.0) ;
       
-      gsl_matrix_set (df, i, i, dz_dxi);
+      df[i, i, dz_dxi);
 
       if (i > 0)
-        gsl_matrix_set (df, i, i-1, -1.0);
+        df[i, i-1, -1.0);
 
       if (i < N - 1)
-        gsl_matrix_set (df, i, i+1, -1.0);
+        df[i, i+1, -1.0);
 
     }
 
@@ -654,7 +653,7 @@ dbv_df (const double * x, void *params, gsl_matrix * df)
 
 int
 dbv_fdf (const double * x, void *params,
-                    double * f, gsl_matrix * df)
+                    double * f, double * df)
 {
   dbv_f (x, params, f);
   dbv_df (x, params, df);
@@ -697,7 +696,7 @@ trig_f (const double * x, void *params, double * f)
       double xi = x[i];
       double z = N - sum + (i + 1) * (1 - cos(xi)) - sin(xi);
 
-      gsl_vector_set (f, i, z);
+      f[i]= z;
     }
 
   params = 0;                   /* avoid warning about unused parameters */
@@ -706,7 +705,7 @@ trig_f (const double * x, void *params, double * f)
 }
 
 int
-trig_df (const double * x, void *params, gsl_matrix * df)
+trig_df (const double * x, void *params, double * df)
 {
   size_t i, j;
 
@@ -723,7 +722,7 @@ trig_df (const double * x, void *params, gsl_matrix * df)
           else
             dz = sin(xj);
           
-          gsl_matrix_set(df, i, j, dz);
+          df[i, j]= dz;
         }
     }
 
@@ -734,7 +733,7 @@ trig_df (const double * x, void *params, gsl_matrix * df)
 
 int
 trig_fdf (const double * x, void *params,
-                    double * f, gsl_matrix * df)
+                    double * f, double * df)
 {
   trig_f (x, params, f);
   trig_df (x, params, df);
