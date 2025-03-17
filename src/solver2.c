@@ -202,10 +202,10 @@ static int region4_f(const double *X, void *user_data, double *f){
 static int region4_df(const double *x, void *user_data, double *J){
 #define D ((Solver2Data *)user_data)
 	SteamState S = freesteam_region4_set_Tx(x[0],x[1]);
-	J[0, 0]= freesteam_region4_dAdTx(D->A,S));
-	J[0, 1]= freesteam_region4_dAdxT(D->A,S));
-	J[1, 0]= freesteam_region4_dAdTx(D->B,S));
-	J[1, 1]= freesteam_region4_dAdxT(D->B,S));
+	J[0, 0]= freesteam_region4_dAdTx(D->A,S);
+	J[0, 1]= freesteam_region4_dAdxT(D->A,S);
+	J[1, 0]= freesteam_region4_dAdTx(D->B,S);
+	J[1, 1]= freesteam_region4_dAdxT(D->B,S);
 	return EXIT_SUCCESS;
 #undef D
 }
@@ -272,8 +272,8 @@ static int region2_f(const double *x, void *user_data, double *f){
 #define D ((Solver2Data *)user_data)
 	double p = x[0];
 	double T = x[1];
-	f[0]= (*(D->Afn))(rho,T) - (D->a);
-	(*(D->Bfn))(rho,T) - (D->b);
+	f[0]= (*(D->Afn))(p,T) - (D->a);
+	f[1]= (*(D->Bfn))(p,T) - (D->b);
 	return EXIT_SUCCESS;
 #undef D
 }
@@ -350,8 +350,8 @@ static int region1_f(const double *x, void *user_data, double *f){
 #define D ((Solver2Data *)user_data)
 	double p = x[0];
 	double T = x[1];
-	f[0]= (*(D->Afn))(rho,T) - (D->a);
-	(*(D->Bfn))(rho,T) - (D->b);
+	f[0]= (*(D->Afn))(p,T) - (D->a);
+	f[1]= (*(D->Bfn))(p,T) - (D->b);
 	return EXIT_SUCCESS;
 #undef D
 }
