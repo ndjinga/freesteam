@@ -23,7 +23,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-extern "C" void dgesv_(int *n, int *nrhs, double *a, int 
+extern void dgesv_(int *n, int *nrhs, double *a, int 
 	*lda, int *ipiv, double *b, int *ldb, int *info);
 
 /* Definition of vector-valued functions and gradient with parameters
