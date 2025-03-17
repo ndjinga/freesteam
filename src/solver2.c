@@ -121,20 +121,20 @@ static int region3_f(const double *x, void *user_data, double *f){
 #undef D
 }
 
-static int region3_df(const double *x, void *user_data, gsl_matrix *J){
+static int region3_df(const double *x, void *user_data, double *J){
 #define D ((Solver2Data *)user_data)
 	double rho = x[0];
 	double T   = x[1];
 	SteamState S = freesteam_region3_set_rhoT(rho,T);
-	gsl_matrix_set(J, 0, 0, -1./SQ(rho)*freesteam_region3_dAdvT(D->A,S));
-	gsl_matrix_set(J, 0, 1, freesteam_region3_dAdTv(D->A,S));
-	gsl_matrix_set(J, 1, 0, -1./SQ(rho)*freesteam_region3_dAdvT(D->B,S));
-	gsl_matrix_set(J, 1, 1, freesteam_region3_dAdTv(D->B,S));
-	return GSL_SUCCESS;
+	J[0, 0]= -1./SQ(rho)*freesteam_region3_dAdvT(D->A,S);
+	J[0, 1]= freesteam_region3_dAdTv(D->A,S);
+	J[1, 0]= -1./SQ(rho)*freesteam_region3_dAdvT(D->B,S);
+	J[1, 1]= freesteam_region3_dAdTv(D->B,S);
+	return EXIT_SUCCESS;
 #undef D
 }
 
-static int region3_fdf(const double *x, void *user_data, double *f, gsl_matrix *J){
+static int region3_fdf(const double *x, void *user_data, double *f, double *J){
 	return region3_f(x, user_data, f) || region3_df(x, user_data, J);
 }
 
@@ -199,18 +199,18 @@ static int region4_f(const double *X, void *user_data, double *f){
 #undef D
 }
 
-static int region4_df(const double *x, void *user_data, gsl_matrix *J){
+static int region4_df(const double *x, void *user_data, double *J){
 #define D ((Solver2Data *)user_data)
 	SteamState S = freesteam_region4_set_Tx(x[0],x[1]);
-	gsl_matrix_set(J, 0, 0, freesteam_region4_dAdTx(D->A,S));
-	gsl_matrix_set(J, 0, 1, freesteam_region4_dAdxT(D->A,S));
-	gsl_matrix_set(J, 1, 0, freesteam_region4_dAdTx(D->B,S));
-	gsl_matrix_set(J, 1, 1, freesteam_region4_dAdxT(D->B,S));
-	return GSL_SUCCESS;
+	J[0, 0]= freesteam_region4_dAdTx(D->A,S));
+	J[0, 1]= freesteam_region4_dAdxT(D->A,S));
+	J[1, 0]= freesteam_region4_dAdTx(D->B,S));
+	J[1, 1]= freesteam_region4_dAdxT(D->B,S));
+	return EXIT_SUCCESS;
 #undef D
 }
 
-static int region4_fdf(const double *x, void *user_data, double *f, gsl_matrix *J){
+static int region4_fdf(const double *x, void *user_data, double *f, double *J){
 	return region4_f(x, user_data, f) || region4_df(x, user_data, J);
 }
 
@@ -274,24 +274,24 @@ static int region2_f(const double *x, void *user_data, double *f){
 	double T = x[1];
 	f[0]= (*(D->Afn))(rho,T) - (D->a);
 	(*(D->Bfn))(rho,T) - (D->b);
-	return GSL_SUCCESS;
+	return EXIT_SUCCESS;
 #undef D
 }
 
-static int region2_df(const double *x, void *user_data, gsl_matrix *J){
+static int region2_df(const double *x, void *user_data, double *J){
 #define D ((Solver2Data *)user_data)
 	double p = x[0];
 	double T = x[1];
 	SteamState S = freesteam_region2_set_pT(p,T);
-	gsl_matrix_set(J, 0, 0, freesteam_region2_dAdpT(D->A,S));
-	gsl_matrix_set(J, 0, 1, freesteam_region2_dAdTp(D->A,S));
-	gsl_matrix_set(J, 1, 0, freesteam_region2_dAdpT(D->B,S));
-	gsl_matrix_set(J, 1, 1, freesteam_region2_dAdTp(D->B,S));
-	return GSL_SUCCESS;
+	J[0, 0]= freesteam_region2_dAdpT(D->A,S);
+	J[0, 1]= freesteam_region2_dAdTp(D->A,S);
+	J[1, 0]= freesteam_region2_dAdpT(D->B,S);
+	J[1, 1]= freesteam_region2_dAdTp(D->B,S);
+	return EXIT_SUCCESS;
 #undef D
 }
 
-static int region2_fdf(const double *x, void *user_data, double *f, gsl_matrix *J){
+static int region2_fdf(const double *x, void *user_data, double *f, double *J){
 	return region2_f(x, user_data, f) || region2_df(x, user_data, J);
 }
 
@@ -352,24 +352,24 @@ static int region1_f(const double *x, void *user_data, double *f){
 	double T = x[1];
 	f[0]= (*(D->Afn))(rho,T) - (D->a);
 	(*(D->Bfn))(rho,T) - (D->b);
-	return GSL_SUCCESS;
+	return EXIT_SUCCESS;
 #undef D
 }
 
-static int region1_df(const double *x, void *user_data, gsl_matrix *J){
+static int region1_df(const double *x, void *user_data, double *J){
 #define D ((Solver2Data *)user_data)
 	double p = x[0];
 	double T = x[1];
 	SteamState S = freesteam_region1_set_pT(p,T);
-	gsl_matrix_set(J, 0, 0, freesteam_region1_dAdpT(D->A,S));
-	gsl_matrix_set(J, 0, 1, freesteam_region1_dAdTp(D->A,S));
-	gsl_matrix_set(J, 1, 0, freesteam_region1_dAdpT(D->B,S));
-	gsl_matrix_set(J, 1, 1, freesteam_region1_dAdTp(D->B,S));
-	return GSL_SUCCESS;
+	J[0, 0]= freesteam_region1_dAdpT(D->A,S);
+	J[0, 1]= freesteam_region1_dAdTp(D->A,S);
+	J[1, 0]= freesteam_region1_dAdpT(D->B,S);
+	J[1, 1]= freesteam_region1_dAdTp(D->B,S);
+	return EXIT_SUCCESS;
 #undef D
 }
 
-static int region1_fdf(const double *x, void *user_data, double *f, gsl_matrix *J){
+static int region1_fdf(const double *x, void *user_data, double *f, double *J){
 	return region1_f(x, user_data, f) || region1_df(x, user_data, J);
 }
 
