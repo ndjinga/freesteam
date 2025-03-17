@@ -395,7 +395,7 @@ SteamState freesteam_solver2_region1(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 	gsl_multiroot_function_fdf f = {&region1_f, &region1_df, &region1_fdf, n, &D};
 
 	double *x = malloc (n*sizeof(double));
-	x[0]= freesteam_rho(guess)
+	x[0]= freesteam_rho(guess);
 	x[1]= freesteam_T(guess);
 	T = gsl_multiroot_fdfsolver_gnewton;
 	s = gsl_multiroot_fdfsolver_alloc(T, n);

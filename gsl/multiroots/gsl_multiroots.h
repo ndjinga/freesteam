@@ -31,7 +31,7 @@ extern "C" void dgesv_(int *n, int *nrhs, double *a, int
 
 struct gsl_multiroot_function_fdf_struct
 {
-  int (* f) (const gsl_vector * x, void * params, double * f);
+  int (* f) (const double * x, void * params, double * f);
   int (* df) (const double * x, void * params, double * df);
   int (* fdf) (const double * x, void * params, double * f, double *df);
   size_t n;
