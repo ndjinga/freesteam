@@ -111,20 +111,20 @@ typedef struct{
   REGION 3
 */
 
-static int region3_f(const gsl_vector *x, void *user_data, gsl_vector *f){
+static int region3_f(const double *x, void *user_data, double *f){
 #define D ((Solver2Data *)user_data)
-	double rho = gsl_vector_get(x,0);
-	double T = gsl_vector_get(x,1);
-	gsl_vector_set(f, 0, (*(D->Afn))(rho,T) - (D->a));
-	gsl_vector_set(f, 1, (*(D->Bfn))(rho,T) - (D->b));
-	return GSL_SUCCESS;
+	double rho = x[0];
+	double T   = x[1];
+	f[0]= (*(D->Afn))(rho,T) - (D->a);
+	f[1]= (*(D->Bfn))(rho,T) - (D->b);
+	return EXIT_SUCCESS;
 #undef D
 }
 
-static int region3_df(const gsl_vector *x, void *user_data, gsl_matrix *J){
+static int region3_df(const double *x, void *user_data, gsl_matrix *J){
 #define D ((Solver2Data *)user_data)
-	double rho = gsl_vector_get(x,0);
-	double T = gsl_vector_get(x,1);
+	double rho = x[0];
+	double T   = x[1];
 	SteamState S = freesteam_region3_set_rhoT(rho,T);
 	gsl_matrix_set(J, 0, 0, -1./SQ(rho)*freesteam_region3_dAdvT(D->A,S));
 	gsl_matrix_set(J, 0, 1, freesteam_region3_dAdTv(D->A,S));
@@ -134,7 +134,7 @@ static int region3_df(const gsl_vector *x, void *user_data, gsl_matrix *J){
 #undef D
 }
 
-static int region3_fdf(const gsl_vector *x, void *user_data, gsl_vector *f, gsl_matrix *J){
+static int region3_fdf(const double *x, void *user_data, double *f, gsl_matrix *J){
 	return region3_f(x, user_data, f) || region3_df(x, user_data, J);
 }
 
@@ -157,9 +157,9 @@ SteamState freesteam_solver2_region3(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 
 	gsl_multiroot_function_fdf f = {&region3_f, &region3_df, &region3_fdf, n, &D};
 
-	gsl_vector *x = gsl_vector_alloc(n);
-	gsl_vector_set(x, 0, freesteam_rho(guess));
-	gsl_vector_set(x, 1, freesteam_T(guess));
+	double *x = malloc (n*sizeof(double));
+	x[0]= freesteam_rho(guess);
+	x[1]= freesteam_T(guess);
 	T = gsl_multiroot_fdfsolver_gnewton;
 	s = gsl_multiroot_fdfsolver_alloc(T, n);
 	gsl_multiroot_fdfsolver_set(s, &f, x);
@@ -174,11 +174,11 @@ SteamState freesteam_solver2_region3(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 			break;
 		}
 		status = gsl_multiroot_test_residual(s->f, 2e-6);
-	} while(status == GSL_CONTINUE && iter < 50);
+	} while(status == EXIT_SUCCESS && iter < 50);
 
-	SteamState S = freesteam_region3_set_rhoT(gsl_vector_get(s->x,0), gsl_vector_get(s->x,1));
+	SteamState S = freesteam_region3_set_rhoT(s->x[0], s->x[1]);
 	gsl_multiroot_fdfsolver_free(s);
-	gsl_vector_free(x);
+	free(x);
 	*retstatus = status;
 	if(status)fprintf(stderr,"%s (%s:%d): %s: ",__func__,__FILE__,__LINE__,gsl_strerror(status));
 	//freesteam_fprint(stderr,S);
@@ -189,19 +189,19 @@ SteamState freesteam_solver2_region3(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
   REGION 4
 */
 
-static int region4_f(const gsl_vector *X, void *user_data, gsl_vector *f){
+static int region4_f(const double *X, void *user_data, double *f){
 #define D ((Solver2Data *)user_data)
-	double T = gsl_vector_get(X,0);
-	double x = gsl_vector_get(X,1);
-	gsl_vector_set(f, 0, (*(D->Afn))(T,x) - (D->a));
-	gsl_vector_set(f, 1, (*(D->Bfn))(T,x) - (D->b));
-	return GSL_SUCCESS;
+	double T = X[0];
+	double x = X[1];
+	f[0]= (*(D->Afn))(T,x) - (D->a);
+	f[1]= (*(D->Bfn))(T,x) - (D->b);
+	return EXIT_SUCCESS;
 #undef D
 }
 
-static int region4_df(const gsl_vector *x, void *user_data, gsl_matrix *J){
+static int region4_df(const double *x, void *user_data, gsl_matrix *J){
 #define D ((Solver2Data *)user_data)
-	SteamState S = freesteam_region4_set_Tx(gsl_vector_get(x,0),gsl_vector_get(x,1));
+	SteamState S = freesteam_region4_set_Tx(x[0],x[1]);
 	gsl_matrix_set(J, 0, 0, freesteam_region4_dAdTx(D->A,S));
 	gsl_matrix_set(J, 0, 1, freesteam_region4_dAdxT(D->A,S));
 	gsl_matrix_set(J, 1, 0, freesteam_region4_dAdTx(D->B,S));
@@ -210,7 +210,7 @@ static int region4_df(const gsl_vector *x, void *user_data, gsl_matrix *J){
 #undef D
 }
 
-static int region4_fdf(const gsl_vector *x, void *user_data, gsl_vector *f, gsl_matrix *J){
+static int region4_fdf(const double *x, void *user_data, double *f, gsl_matrix *J){
 	return region4_f(x, user_data, f) || region4_df(x, user_data, J);
 }
 
@@ -233,10 +233,10 @@ SteamState freesteam_solver2_region4(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 
 	gsl_multiroot_function_fdf f = {&region4_f, &region4_df, &region4_fdf, n, &D};
 
-	gsl_vector *x = gsl_vector_alloc(n);
+	double *x = malloc (n*sizeof(double));
 	assert(guess.region==4);
-	gsl_vector_set(x, 0, guess.R4.T);
-	gsl_vector_set(x, 1, guess.R4.x);
+	x[0]= guess.R4.T;
+	x[1]= guess.R4.x;
 	T = gsl_multiroot_fdfsolver_gnewton;
 	s = gsl_multiroot_fdfsolver_alloc(T, n);
 	gsl_multiroot_fdfsolver_set(s, &f, x);
@@ -251,13 +251,13 @@ SteamState freesteam_solver2_region4(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 			break;
 		}
 		status = gsl_multiroot_test_residual(s->f, 1e-7);
-	} while(status == GSL_CONTINUE && iter < 20);
+	} while(status == EXIT_SUCCESS && iter < 20);
 
 	fprintf(stderr,"status = %s\n", gsl_strerror (status));
-	SteamState S = freesteam_region4_set_Tx(gsl_vector_get(s->x,0), gsl_vector_get(s->x,1));
+	SteamState S = freesteam_region4_set_Tx(s->x[0], s->x[1]);
 	gsl_multiroot_fdfsolver_free(s);
 
-	gsl_vector_free(x);
+	free(x);
 	*retstatus = status;
 	if(status)fprintf(stderr,"%s (%s:%d): %s: ",__func__,__FILE__,__LINE__,gsl_strerror(status));
 	//freesteam_fprint(stderr,S);
@@ -268,20 +268,20 @@ SteamState freesteam_solver2_region4(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
   REGION 2
 */
 
-static int region2_f(const gsl_vector *x, void *user_data, gsl_vector *f){
+static int region2_f(const double *x, void *user_data, double *f){
 #define D ((Solver2Data *)user_data)
-	double p = gsl_vector_get(x,0);
-	double T = gsl_vector_get(x,1);
-	gsl_vector_set(f, 0, (*(D->Afn))(p,T) - (D->a));
-	gsl_vector_set(f, 1, (*(D->Bfn))(p,T) - (D->b));
+	double p = x[0];
+	double T = x[1];
+	f[0]= (*(D->Afn))(rho,T) - (D->a);
+	(*(D->Bfn))(rho,T) - (D->b);
 	return GSL_SUCCESS;
 #undef D
 }
 
-static int region2_df(const gsl_vector *x, void *user_data, gsl_matrix *J){
+static int region2_df(const double *x, void *user_data, gsl_matrix *J){
 #define D ((Solver2Data *)user_data)
-	double p = gsl_vector_get(x,0);
-	double T = gsl_vector_get(x,1);
+	double p = x[0];
+	double T = x[1];
 	SteamState S = freesteam_region2_set_pT(p,T);
 	gsl_matrix_set(J, 0, 0, freesteam_region2_dAdpT(D->A,S));
 	gsl_matrix_set(J, 0, 1, freesteam_region2_dAdTp(D->A,S));
@@ -291,13 +291,13 @@ static int region2_df(const gsl_vector *x, void *user_data, gsl_matrix *J){
 #undef D
 }
 
-static int region2_fdf(const gsl_vector *x, void *user_data, gsl_vector *f, gsl_matrix *J){
+static int region2_fdf(const double *x, void *user_data, double *f, gsl_matrix *J){
 	return region2_f(x, user_data, f) || region2_df(x, user_data, J);
 }
 
 static void region2_print_state(size_t iter, gsl_multiroot_fdfsolver *s){
-	double p = gsl_vector_get(s->x,0);
-	double T = gsl_vector_get(s->x,1);
+	double p = s->x[0];
+	double T = s->x[1];
 	fprintf(stderr,"iter = %lu: p = %g, T = %g\n", (long unsigned)iter,p,T);
 }
 
@@ -313,9 +313,9 @@ SteamState freesteam_solver2_region2(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 
 	gsl_multiroot_function_fdf f = {&region2_f, &region2_df, &region2_fdf, n, &D};
 
-	gsl_vector *x = gsl_vector_alloc(n);
-	gsl_vector_set(x, 0, freesteam_rho(guess));
-	gsl_vector_set(x, 1, freesteam_T(guess));
+	double *x = malloc (n*sizeof(double));
+	x[0]= freesteam_rho(guess);
+	x[1]= freesteam_T(guess);
 	T = gsl_multiroot_fdfsolver_gnewton;
 	s = gsl_multiroot_fdfsolver_alloc(T, n);
 	gsl_multiroot_fdfsolver_set(s, &f, x);
@@ -330,12 +330,12 @@ SteamState freesteam_solver2_region2(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 			break;
 		}
 		status = gsl_multiroot_test_residual(s->f, 1e-7);
-	} while(status == GSL_CONTINUE && iter < 20);
+	} while(status == EXIT_SUCCESS && iter < 20);
 
-	SteamState S = freesteam_region2_set_pT(gsl_vector_get(s->x,0), gsl_vector_get(s->x,1));
+	SteamState S = freesteam_region2_set_pT(s->x[0], s->x[1]);
 	gsl_multiroot_fdfsolver_free(s);
 
-	gsl_vector_free(x);
+	free(x);
 	*retstatus = status;
 	if(status)fprintf(stderr,"%s (%s:%d): %s: ",__func__,__FILE__,__LINE__,gsl_strerror(status));
 	//freesteam_fprint(stderr,S);
@@ -346,20 +346,20 @@ SteamState freesteam_solver2_region2(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
   REGION 1
 */
 
-static int region1_f(const gsl_vector *x, void *user_data, gsl_vector *f){
+static int region1_f(const double *x, void *user_data, double *f){
 #define D ((Solver2Data *)user_data)
-	double p = gsl_vector_get(x,0);
-	double T = gsl_vector_get(x,1);
-	gsl_vector_set(f, 0, (*(D->Afn))(p,T) - (D->a));
-	gsl_vector_set(f, 1, (*(D->Bfn))(p,T) - (D->b));
+	double p = x[0];
+	double T = x[1];
+	f[0]= (*(D->Afn))(rho,T) - (D->a);
+	(*(D->Bfn))(rho,T) - (D->b);
 	return GSL_SUCCESS;
 #undef D
 }
 
-static int region1_df(const gsl_vector *x, void *user_data, gsl_matrix *J){
+static int region1_df(const double *x, void *user_data, gsl_matrix *J){
 #define D ((Solver2Data *)user_data)
-	double p = gsl_vector_get(x,0);
-	double T = gsl_vector_get(x,1);
+	double p = x[0];
+	double T = x[1];
 	SteamState S = freesteam_region1_set_pT(p,T);
 	gsl_matrix_set(J, 0, 0, freesteam_region1_dAdpT(D->A,S));
 	gsl_matrix_set(J, 0, 1, freesteam_region1_dAdTp(D->A,S));
@@ -369,7 +369,7 @@ static int region1_df(const gsl_vector *x, void *user_data, gsl_matrix *J){
 #undef D
 }
 
-static int region1_fdf(const gsl_vector *x, void *user_data, gsl_vector *f, gsl_matrix *J){
+static int region1_fdf(const double *x, void *user_data, double *f, gsl_matrix *J){
 	return region1_f(x, user_data, f) || region1_df(x, user_data, J);
 }
 
@@ -394,9 +394,9 @@ SteamState freesteam_solver2_region1(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 
 	gsl_multiroot_function_fdf f = {&region1_f, &region1_df, &region1_fdf, n, &D};
 
-	gsl_vector *x = gsl_vector_alloc(n);
-	gsl_vector_set(x, 0, freesteam_rho(guess));
-	gsl_vector_set(x, 1, freesteam_T(guess));
+	double *x = malloc (n*sizeof(double));
+	x[0]= freesteam_rho(guess)
+	x[1]= freesteam_T(guess);
 	T = gsl_multiroot_fdfsolver_gnewton;
 	s = gsl_multiroot_fdfsolver_alloc(T, n);
 	gsl_multiroot_fdfsolver_set(s, &f, x);
@@ -411,12 +411,12 @@ SteamState freesteam_solver2_region1(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 			break;
 		}
 		status = gsl_multiroot_test_residual(s->f, 1e-6);
-	} while(status == GSL_CONTINUE && iter < 20);
+	} while(status == EXIT_SUCCESS && iter < 20);
 
-	SteamState S = freesteam_region1_set_pT(gsl_vector_get(s->x,0), gsl_vector_get(s->x,1));
+	SteamState S = freesteam_region1_set_pT(s->x[0], s->x[1]);
 	gsl_multiroot_fdfsolver_free(s);
 
-	gsl_vector_free(x);
+	free(x);
 	*retstatus = status;
 	if(status){
 		fprintf(stderr,"%s (%s:%d): %s: ",__func__,__FILE__,__LINE__,gsl_strerror(status));
