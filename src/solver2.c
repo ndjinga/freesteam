@@ -31,6 +31,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <errno.h>
+#include <string.h>
 #include <gsl_multiroots.h>
 
 /*------------------------------------------------------------------------------
@@ -180,7 +182,7 @@ SteamState freesteam_solver2_region3(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 	gsl_multiroot_fdfsolver_free(s);
 	free(x);
 	*retstatus = status;
-	if(status)fprintf(stderr,"%s (%s:%d): %s: ",__func__,__FILE__,__LINE__,gsl_strerror(status));
+	if(status)fprintf(stderr,"%s (%s:%d): %s: ",__func__,__FILE__,__LINE__,strerror(status));
 	//freesteam_fprint(stderr,S);
 	return S;
 }
@@ -253,13 +255,13 @@ SteamState freesteam_solver2_region4(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 		status = gsl_multiroot_test_residual(s->f, 1e-7);
 	} while(status == EXIT_SUCCESS && iter < 20);
 
-	fprintf(stderr,"status = %s\n", gsl_strerror (status));
+	fprintf(stderr,"status = %s\n", strerror (status));
 	SteamState S = freesteam_region4_set_Tx(s->x[0], s->x[1]);
 	gsl_multiroot_fdfsolver_free(s);
 
 	free(x);
 	*retstatus = status;
-	if(status)fprintf(stderr,"%s (%s:%d): %s: ",__func__,__FILE__,__LINE__,gsl_strerror(status));
+	if(status)fprintf(stderr,"%s (%s:%d): %s: ",__func__,__FILE__,__LINE__,strerror(status));
 	//freesteam_fprint(stderr,S);
 	return S;
 }
@@ -337,7 +339,7 @@ SteamState freesteam_solver2_region2(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 
 	free(x);
 	*retstatus = status;
-	if(status)fprintf(stderr,"%s (%s:%d): %s: ",__func__,__FILE__,__LINE__,gsl_strerror(status));
+	if(status)fprintf(stderr,"%s (%s:%d): %s: ",__func__,__FILE__,__LINE__,strerror(status));
 	//freesteam_fprint(stderr,S);
 	return S;
 }
@@ -419,7 +421,7 @@ SteamState freesteam_solver2_region1(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 	free(x);
 	*retstatus = status;
 	if(status){
-		fprintf(stderr,"%s (%s:%d): %s: ",__func__,__FILE__,__LINE__,gsl_strerror(status));
+		fprintf(stderr,"%s (%s:%d): %s: ",__func__,__FILE__,__LINE__,strerror(status));
 		freesteam_fprint(stderr,S);
 	}
 	return S;

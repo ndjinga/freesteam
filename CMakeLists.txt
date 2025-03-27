@@ -85,6 +85,13 @@ install(FILES ${MY_HEADERS} DESTINATION include)
 
 add_library(freesteamCPP SHARED ${MY_SOURCES})
 
+# test main exe
+add_executable(freesteam_test ${MY_TEST_SOURCES})
+include_directories(${MY_HEADER_DIR})
+target_link_libraries(freesteam_test freesteamCPP)
+install(TARGETS freesteam_test DESTINATION test)
+add_test(NAME freesteam_test  COMMAND "./freesteam_test")  
+
 #LAPACK is only mandatory depedence
 find_package(LAPACK REQUIRED)
 if  (LAPACK_FOUND)
@@ -104,24 +111,19 @@ endif(LAPACK_FOUND)
 if  (FREESTEAM_WITH_GSL)
     message(STATUS "Freesteam with gsl library. Searching gsl library.")
     find_package(GSL REQUIRED)
+    message (STATUS "GSL found at ${GSL_LIBRARIES}")
     target_include_directories(freesteamCPP PRIVATE ${GSL_INCLUDE_DIRS} )
     target_link_libraries(freesteamCPP ${GSL_LIBRARIES})
-    message (STATUS "GSL found at ${GSL_LIBRARIES}")
+    target_link_libraries(freesteam_test ${GSL_LIBRARIES})
 else(FREESTEAM_WITH_GSL)
     message(STATUS "Freesteam with gsl-light.")
     add_subdirectory(gsl)
     target_include_directories(freesteamCPP PRIVATE ./gsl/multiroots )
     target_link_libraries(freesteamCPP gsl-multiroots )
+    target_link_libraries(freesteam_test gsl-multiroots)
 endif(FREESTEAM_WITH_GSL)
 
 install(TARGETS freesteamCPP DESTINATION lib)
-
-# test main exe
-add_executable(freesteam_test ${MY_TEST_SOURCES})
-include_directories(${MY_HEADER_DIR})
-target_link_libraries(freesteam_test freesteamCPP)
-install(TARGETS freesteam_test DESTINATION test)
-add_test(NAME freesteam_test  COMMAND "./freesteam_test")  
 
 #swig wrapping
 if   ( FREESTEAM_WITH_PYTHON )
