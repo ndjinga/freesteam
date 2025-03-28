@@ -17,7 +17,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include <config.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
@@ -55,7 +54,7 @@ gsl_multiroot_fdfsolver_alloc (const gsl_multiroot_fdfsolver_type * T,
       perror ("failed to allocate space for f");
     }
 
-  s->J = calloc (n,n,sizeof(double));//gsl_matrix_calloc
+  s->J = calloc (n,n*sizeof(double));//gsl_matrix_calloc
 
   if (s->J == 0) 
     {

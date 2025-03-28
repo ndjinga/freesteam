@@ -80,17 +80,10 @@ src/viscosity.h
 src/zeroin.h
 )
 
-file(COPY ${MY_HEADER_DIR} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 install(FILES ${MY_HEADERS} DESTINATION include)
 
 add_library(freesteamCPP SHARED ${MY_SOURCES})
-
-# test main exe
-add_executable(freesteam_test ${MY_TEST_SOURCES})
-include_directories(${MY_HEADER_DIR})
-target_link_libraries(freesteam_test freesteamCPP)
-install(TARGETS freesteam_test DESTINATION test)
-add_test(NAME freesteam_test  COMMAND "./freesteam_test")  
+target_include_directories(freesteamCPP PRIVATE ${MY_HEADER_DIR} )
 
 #LAPACK is only mandatory depedence
 find_package(LAPACK REQUIRED)
@@ -114,16 +107,26 @@ if  (FREESTEAM_WITH_GSL)
     message (STATUS "GSL found at ${GSL_LIBRARIES}")
     target_include_directories(freesteamCPP PRIVATE ${GSL_INCLUDE_DIRS} )
     target_link_libraries(freesteamCPP ${GSL_LIBRARIES})
-    target_link_libraries(freesteam_test ${GSL_LIBRARIES})
 else(FREESTEAM_WITH_GSL)
-    message(STATUS "Freesteam with gsl-light.")
+    message(STATUS "Freesteam with gsl-multiroots.")
     add_subdirectory(gsl)
     target_include_directories(freesteamCPP PRIVATE ./gsl/multiroots )
     target_link_libraries(freesteamCPP gsl-multiroots )
-    target_link_libraries(freesteam_test gsl-multiroots)
 endif(FREESTEAM_WITH_GSL)
 
 install(TARGETS freesteamCPP DESTINATION lib)
+
+# test main exe
+add_executable(freesteam_test ${MY_TEST_SOURCES})
+target_link_libraries(freesteam_test freesteamCPP )
+if  (FREESTEAM_WITH_GSL)
+    target_link_libraries(freesteam_test ${GSL_LIBRARIES})
+else(FREESTEAM_WITH_GSL)
+    target_link_libraries(freesteam_test gsl-multiroots)
+endif(FREESTEAM_WITH_GSL)
+
+add_test(NAME freesteam_test  COMMAND "./freesteam_test")  
+install(TARGETS freesteam_test DESTINATION test)
 
 #swig wrapping
 if   ( FREESTEAM_WITH_PYTHON )

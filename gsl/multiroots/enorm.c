@@ -17,13 +17,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-static double enorm (const gsl_vector * f);
+#include <stddef.h>
 
-static double enorm (const gsl_vector * f) {
+static double enorm (const double * f, size_t size);
+
+static double enorm (const double * f, size_t size) {
   double e2 = 0 ;
-  size_t i, n = f->size ;
+  size_t i, n = size ;
   for (i = 0; i < n ; i++) {
-    double fi= gsl_vector_get(f, i);
+    double fi= f[i];
     e2 += fi * fi ;
   }
   return sqrt(e2);
