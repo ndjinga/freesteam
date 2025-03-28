@@ -20,7 +20,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include <gsl/gsl_multiroots.h>
+#include <multiroots.h>
 
 gsl_multiroot_fdfsolver *
 gsl_multiroot_fdfsolver_alloc (const gsl_multiroot_fdfsolver_type * T, 

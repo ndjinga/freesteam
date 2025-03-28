@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include <math.h>
-#include <gsl/gsl_multiroots.h>
+#include <multiroots.h>
 
 #include "test_funcs.h"
 

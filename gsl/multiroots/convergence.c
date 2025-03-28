@@ -20,7 +20,7 @@
 #include <config.h>
 #include <math.h>
 #include <errno.h>
-#include <gsl/gsl_multiroots.h>
+#include <multiroots.h>
 
 int
 gsl_multiroot_test_delta (const double * dx, const double * x, 

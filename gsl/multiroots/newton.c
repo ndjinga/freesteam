@@ -27,8 +27,7 @@
 
 #include <math.h>//<gsl/gsl_math.h>
 #include <errno.h>//<gsl/gsl_errno.h>
-#include <gsl/gsl_multiroots.h>
-#include <gsl/gsl_linalg.h>
+#include <multiroots.h>
 
 typedef struct
   {

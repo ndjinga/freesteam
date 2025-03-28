@@ -25,10 +25,8 @@
 #include <math.h>
 #include <float.h>
 
-#include <gsl/gsl_math.h>
-#include <gsl/gsl_errno.h>
-#include <gsl/gsl_multiroots.h>
-#include <gsl/gsl_linalg.h>
+#include <errno.h>
+#include <multiroots.h>
 
 #include "enorm.c"
 
