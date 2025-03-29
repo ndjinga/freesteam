@@ -64,6 +64,7 @@ typedef struct
     double * J;
     double * dx;
     void *state;
+    int sizex;
   }
 gsl_multiroot_fdfsolver;
 
@@ -74,7 +75,7 @@ gsl_multiroot_fdfsolver_alloc (const gsl_multiroot_fdfsolver_type * T,
 int
 gsl_multiroot_fdfsolver_set (gsl_multiroot_fdfsolver * s, 
                              gsl_multiroot_function_fdf * fdf,
-                             const double * x);
+                             const double * x, int size);
 
 int
 gsl_multiroot_fdfsolver_iterate (gsl_multiroot_fdfsolver * s);

@@ -18,6 +18,7 @@
  */
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <errno.h>
 #include <multiroots.h>
@@ -106,26 +107,28 @@ gsl_multiroot_fdfsolver_alloc (const gsl_multiroot_fdfsolver_type * T,
   
   s->fdf = NULL;
   
+  s->sizex = n;
+  
   return s;
 }
 
 int
 gsl_multiroot_fdfsolver_set (gsl_multiroot_fdfsolver * s, 
                              gsl_multiroot_function_fdf * f, 
-                             const double * x)
+                             const double * x, int size)
 {
-  if (s->x->size != f->n)
+  if ( s->sizex != f->n)
     {
       perror ("function incompatible with solver size");
     }
   
-  if (x->size != f->n) 
+  if ( size != f->n) 
     {
       perror ("vector length not compatible with function");
     }  
     
   s->fdf = f;
-  memcpy(s->x,x,s->x->size);
+  memcpy(s->x,x,s->sizex);
   
   return (s->type->set) (s->state, s->fdf, s->x, s->f, s->J, s->dx);
 }
@@ -139,7 +142,8 @@ gsl_multiroot_fdfsolver_iterate (gsl_multiroot_fdfsolver * s)
 void
 gsl_multiroot_fdfsolver_free (gsl_multiroot_fdfsolver * s)
 {
-  RETURN_IF_NULL (s);
+  if (s==0)
+      return;
   (s->type->free) (s->state);
   free (s->state);
   free (s->dx);

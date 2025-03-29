@@ -22,7 +22,6 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <math.h>
 #include <float.h>
 
 #include <math.h>//<gsl/gsl_math.h>
