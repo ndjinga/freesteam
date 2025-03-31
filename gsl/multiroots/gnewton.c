@@ -129,7 +129,7 @@ gnewton_iterate (void * vstate, gsl_multiroot_function_fdf * fdf, double * x, do
 
   size_t i;//iteration variable
 
-  size_t n = fdf->n ;
+  int n = fdf->n ;
 
   int nrhs=1;//number of right hand side vectors
 
