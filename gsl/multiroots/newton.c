@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <float.h>  
+#include <string.h>
 
 #include <math.h>//<gsl/gsl_math.h>
 #include <errno.h>//<gsl/gsl_errno.h>
@@ -45,7 +46,7 @@ newton_alloc (void * vstate, size_t n)
   int * p;//gsl_permutation
   double * m;//gsl_matrix
 
-  m = calloc (n,n,sizeof(double));//gsl_matrix_calloc(n,n)
+  m = calloc (n,n*sizeof(double));//gsl_matrix_calloc(n,n)
   
   if (m == 0) 
     {
@@ -55,7 +56,7 @@ newton_alloc (void * vstate, size_t n)
 
   state->lu = m ;
 
-  p = calloc(n,n,sizeof(int));//gsl_permutation_calloc(n)
+  p = calloc(n,n*sizeof(int));//gsl_permutation_calloc(n)
 
   if (p == 0)
     {
