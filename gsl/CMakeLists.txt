@@ -3,7 +3,7 @@ PROJECT(gsl-multiroots)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)
 
 set(MY_MULTIROOTS_SOURCES
-  multiroots/enorm.c  multiroots/fdfsolver.c  multiroots/gnewton.c  multiroots/hybridj.c  multiroots/newton.c#multiroots/dogleg.c  
+  multiroots/enorm.c  multiroots/fdfsolver.c  multiroots/gnewton.c  multiroots/newton.c 
 )
 
 set(MY_MULTIROOTS_HEADERS_DIR

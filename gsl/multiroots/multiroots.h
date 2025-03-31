@@ -95,7 +95,5 @@ int gsl_multiroot_test_residual (const double * f, double epsabs);
 
 extern const gsl_multiroot_fdfsolver_type * gsl_multiroot_fdfsolver_newton;
 extern const gsl_multiroot_fdfsolver_type * gsl_multiroot_fdfsolver_gnewton;
-extern const gsl_multiroot_fdfsolver_type * gsl_multiroot_fdfsolver_hybridj;
-extern const gsl_multiroot_fdfsolver_type * gsl_multiroot_fdfsolver_hybridsj;
 
 #endif /* __MULTIROOTS_H__ */
