@@ -53,52 +53,52 @@ gnewton_alloc (void * vstate, size_t n)
   int * p;
   double * m;
 
-  m = gsl_matrix_calloc (n,n);
+  m = calloc (n*n,sizeof(double));//gsl_matrix_calloc(n,n)
   
   if (m == 0) 
     {
-      GSL_ERROR ("failed to allocate space for lu", GSL_ENOMEM);
+      perror ("failed to allocate space for lu");
     }
 
   state->lu = m ;
 
-  p = gsl_permutation_calloc (n);
+  p = calloc(n*n,sizeof(int));//gsl_permutation_calloc(n);
 
   if (p == 0)
     {
-      gsl_matrix_free(m);
+      free(m);//gsl_matrix_free
 
-      GSL_ERROR ("failed to allocate space for permutation", GSL_ENOMEM);
+      pERROR ("failed to allocate space for permutation");
     }
 
   state->permutation = p ;
 
-  d = gsl_vector_calloc (n);
+  d = calloc (n,sizeof(double));//gsl_vector_calloc
 
   if (d == 0)
     {
-      gsl_permutation_free(p);
-      gsl_matrix_free(m);
+      free(p);//gsl_permutation_free
+      free(m);//gsl_matrix_free
 
-      GSL_ERROR ("failed to allocate space for d", GSL_ENOMEM);
+      pERROR ("failed to allocate space for d");
     }
 
   state->d = d;
 
-  x_trial = gsl_vector_calloc (n);
+  x_trial = calloc (n,sizeof(double));//gsl_vector_calloc
 
   if (x_trial == 0)
     {
-      gsl_vector_free(d);
-      gsl_permutation_free(p);
-      gsl_matrix_free(m);
+      free(m);//gsl_vector_free
+      free(p);//gsl_permutation_free
+      free(m);//gsl_matrix_free
 
-      GSL_ERROR ("failed to allocate space for x_trial", GSL_ENOMEM);
+      pERROR ("failed to allocate space for x_trial");
     }
 
   state->x_trial = x_trial;
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 
@@ -112,12 +112,12 @@ gnewton_set (void * vstate, gsl_multiroot_function_fdf * FDF, double * x, double
 
   for (i = 0; i < n; i++)
     {
-      gsl_vector_set (dx, i, 0.0);
+      dx[i]= 0.0;
     }
 
   state->phi = enorm(f);
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 static int
@@ -132,7 +132,7 @@ gnewton_iterate (void * vstate, gsl_multiroot_function_fdf * fdf, double * x, do
 
   size_t n = fdf->n ;
 
-  gsl_matrix_memcpy (state->lu, J);
+  memcpy (state->lu, J, n*n);//gsl_matrix_memcpy (state->lu, J);
 
   gsl_linalg_LU_decomp (state->lu, state->permutation, &signum);
 
@@ -150,17 +150,17 @@ new_step:
 
   for (i = 0; i < n; i++)
     {
-      double di = gsl_vector_get (state->d, i);
-      double xi = gsl_vector_get (x, i);
-      gsl_vector_set (state->x_trial, i, xi - t*di);
+      double di = state->d[i];
+      double xi = x[i];
+      state->x_trial[i]= xi - t*di;
     }
   
   { 
     int status = GSL_MULTIROOT_FN_EVAL_F (fdf, state->x_trial, f);
     
-    if (status != GSL_SUCCESS)
+    if (status != EXIT_SUCCESS)
       {
-        return GSL_EBADFUNC;
+        return EXIT_FAILURE;
       }
   }
   
@@ -180,26 +180,26 @@ new_step:
 
   /* copy x_trial into x */
 
-  gsl_vector_memcpy (x, state->x_trial);
+  memcpy (x, state->x_trial, n);//gsl_vector_memcpy (x, state->x_trial);
 
   for (i = 0; i < n; i++)
     {
-      double di = gsl_vector_get (state->d, i);
-      gsl_vector_set (dx, i, -t*di);
+      double di = state->d[i];
+      dx[i]= -t*di;
     }
 
   { 
     int status = GSL_MULTIROOT_FN_EVAL_DF (fdf, x, J);
     
-    if (status != GSL_SUCCESS)
+    if (status != EXIT_SUCCESS)
       {
-        return GSL_EBADFUNC;
+        return EXIT_FAILURE;
       }
   }
 
   state->phi = phi1;
 
-  return GSL_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 
@@ -208,10 +208,10 @@ gnewton_free (void * vstate)
 {
   gnewton_state_t * state = (gnewton_state_t *) vstate;
 
-  gsl_vector_free(state->d);
-  gsl_vector_free(state->x_trial);
-  gsl_matrix_free(state->lu);
-  gsl_permutation_free(state->permutation);
+  free(state->d);//gsl_vector_free
+  free(state->x_trial);//gsl_vector_free
+  free(state->lu);//gsl_matrix_free
+  free(state->permutation);//gsl_permutation_free
 }
 
 
