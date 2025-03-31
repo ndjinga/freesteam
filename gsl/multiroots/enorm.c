@@ -18,6 +18,7 @@
  */
 
 #include <stddef.h>
+#include <math.h>
 
 static double enorm (const double * f, size_t size);
 

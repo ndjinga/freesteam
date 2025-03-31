@@ -20,8 +20,8 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <math.h>
 #include <float.h>
+#include <string.h>
 
 #include <errno.h>
 #include <multiroots.h>
@@ -68,7 +68,7 @@ gnewton_alloc (void * vstate, size_t n)
     {
       free(m);//gsl_matrix_free
 
-      pERROR ("failed to allocate space for permutation");
+      perror ("failed to allocate space for permutation");
     }
 
   state->permutation = p ;
@@ -80,7 +80,7 @@ gnewton_alloc (void * vstate, size_t n)
       free(p);//gsl_permutation_free
       free(m);//gsl_matrix_free
 
-      pERROR ("failed to allocate space for d");
+      perror ("failed to allocate space for d");
     }
 
   state->d = d;
@@ -93,7 +93,7 @@ gnewton_alloc (void * vstate, size_t n)
       free(p);//gsl_permutation_free
       free(m);//gsl_matrix_free
 
-      pERROR ("failed to allocate space for x_trial");
+      perror ("failed to allocate space for x_trial");
     }
 
   state->x_trial = x_trial;
@@ -115,7 +115,7 @@ gnewton_set (void * vstate, gsl_multiroot_function_fdf * FDF, double * x, double
       dx[i]= 0.0;
     }
 
-  state->phi = enorm(f);
+  state->phi = enorm(f,n);
 
   return EXIT_SUCCESS;
 }
@@ -125,22 +125,37 @@ gnewton_iterate (void * vstate, gsl_multiroot_function_fdf * fdf, double * x, do
 {
   gnewton_state_t * state = (gnewton_state_t *) vstate;
   
-  int signum ;
   double t, phi0, phi1;
 
-  size_t i;
+  size_t i;//iteration variable
 
   size_t n = fdf->n ;
 
+  int nrhs=1;//number of right hand side vectors
+
+  int lda=n;//number of lines of the matrix A
+
+  int ldb=n;//number of lines of the RHS b
+
+  int info=0;
+
   memcpy (state->lu, J, n*n);//gsl_matrix_memcpy (state->lu, J);
 
-  gsl_linalg_LU_decomp (state->lu, state->permutation, &signum);
+  memcpy (state->d, f, n);
 
-  {
-    int status = gsl_linalg_LU_solve (state->lu, state->permutation, f, state->d);
-    if (status)
-      return status;
-  }
+  dgesv_( &n, &nrhs, state->lu, &lda, state->permutation, state->d, &ldb, &info);
+
+  if (info<0)
+    {
+      printf("Argument %i had an illegal value", -info);
+      perror("Invalid argument (illegal value)" ); 
+      return EXIT_FAILURE;
+    }
+  else if (info>0)
+    {
+      perror(" The factorization LU has been completed, but the factor U is exactly singular, so the solution could not be computed " ); 
+      return EXIT_FAILURE;
+    }
 
   t = 1;
 
@@ -164,9 +179,9 @@ new_step:
       }
   }
   
-  phi1 = enorm (f);
+  phi1 = enorm (f,n);
 
-  if (phi1 > phi0 && t > GSL_DBL_EPSILON)  
+  if (phi1 > phi0 && t > LDBL_EPSILON)  
     {
       /* full step goes uphill, take a reduced step instead */
 
