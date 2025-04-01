@@ -7,8 +7,15 @@ set(PACKAGE_VERSION_MAJOR "3")
 set(PACKAGE_VERSION_MINOR "2")
 set(PACKAGE_VERSION_PATCH "0")
 
-option (FREESTEAM_WITH_PYTHON        "Compile Python interface of freesteam" ON)
-enable_testing ()
+option (FREESTEAM_WITH_PYTHON     "Build Python interface of freesteam" ON)
+option (FREESTEAM_WITH_TESTS      "Build and run FREESTEAM example tests" ON)
+option (FREESTEAM_WITH_LAPACK     "Build FREESTEAM with LAPACK (Linear Algebra Package)" ON)
+option (FREESTEAM_WITH_GSL        "Build FREESTEAM with GSL (Gnu Scientific Library)" OFF)
+
+#Path to installed libraries
+set (PYTHON_DIR          OFF CACHE STRING "PYTHON library path" )
+set (LAPACK_DIR          OFF CACHE STRING "LAPACK library path" )
+set (GSL_ROOT            OFF CACHE STRING "GSL library path" )#For the compilation of MED with a specific version of HDF5
 
 # this version name is used by CPack
 set(PACKAGE_VERSION_NAME ${PACKAGE_VERSION_MAJOR}.${PACKAGE_VERSION_MINOR})
@@ -42,10 +49,6 @@ src/surftens.c
 src/thcond.c
 src/viscosity.c
 src/zeroin.c
-)
-
-set(MY_TEST_SOURCES
-src/test.c
 )
 
 # if installed, it should be put in subfolder of `freesteam` on system include dir
@@ -85,48 +88,61 @@ install(FILES ${MY_HEADERS} DESTINATION include)
 add_library(freesteamCPP SHARED ${MY_SOURCES})
 target_include_directories(freesteamCPP PRIVATE ${MY_HEADER_DIR} )
 
-#LAPACK is only mandatory depedence
-find_package(LAPACK REQUIRED)
-if  (LAPACK_FOUND)
+#LAPACK is an optional depedence
+if( FREESTEAM_WITH_LAPACK )
+ message(STATUS "Freesteam requested with LAPACK library. Searching LAPACK library.")
+ find_package(LAPACK REQUIRED)
+ if  (LAPACK_FOUND)
     set(LAPACK_INCLUDE_DIRS "/usr/include/lapacke/ /usr/include/openblas/ /usr/include/ ${LAPACK_INCLUDE_DIRS} $ENV{LAPACK_INCLUDE_DIRS}")
 
     target_include_directories(freesteamCPP PRIVATE ${LAPACK_INCLUDE_DIRS} )
     target_link_libraries(freesteamCPP ${LAPACK_LIBRARIES})
 
     message (STATUS "LAPACK found at ${LAPACK_LIBRARIES}")
-else(LAPACK_FOUND)
+ else(LAPACK_FOUND)
     message(ERROR "Linear Algebra PACKage (LAPACK) lib and headers are not found:"
                 "please install lapack-devel or openblas-devel (RedHat/Fedora/CentOS) or liblapacke-dev (Debian/Ubuntu) using package manager, "
                 "or export LAPACK_LIBRARIES and LAPACK_INCLUDE_DIRS variables as hint")
-endif(LAPACK_FOUND)
+ endif(LAPACK_FOUND)
+endif( FREESTEAM_WITH_LAPACK )
 
 #GSL is an optional depedence
 if  (FREESTEAM_WITH_GSL)
-    message(STATUS "Freesteam with gsl library. Searching gsl library.")
+    message(STATUS "Freesteam requested with gsl library. Searching gsl library.")
     find_package(GSL REQUIRED)
     message (STATUS "GSL found at ${GSL_LIBRARIES}")
     target_include_directories(freesteamCPP PRIVATE ${GSL_INCLUDE_DIRS} )
     target_link_libraries(freesteamCPP ${GSL_LIBRARIES})
-else(FREESTEAM_WITH_GSL)
-    message(STATUS "Freesteam with gsl-multiroots.")
-    add_subdirectory(gsl)
-    target_include_directories(freesteamCPP PRIVATE ./gsl/multiroots )
-    target_link_libraries(freesteamCPP gsl-multiroots )
+else(FREESTEAM_WITH_GSL)#use built in newton solver based on lapack
+    message(STATUS "gsl not requested. Building Freesteam with gsl-multiroots.")
+    if( FREESTEAM_WITH_LAPACK )
+      add_subdirectory(gsl)
+      target_include_directories(freesteamCPP PRIVATE ./gsl/multiroots )
+      target_link_libraries(freesteamCPP gsl-multiroots )
+    else( FREESTEAM_WITH_LAPACK )
+      message(ERROR "Either GSL or LAPACK should be requested. Set FREESTEAM_WITH_LAPACK or FREESTEAM_WITH_GSL to ON")
+    endif( FREESTEAM_WITH_LAPACK )
 endif(FREESTEAM_WITH_GSL)
 
 install(TARGETS freesteamCPP DESTINATION lib)
 
-# test main exe
-add_executable(freesteam_test ${MY_TEST_SOURCES})
-target_link_libraries(freesteam_test freesteamCPP )
-if  (FREESTEAM_WITH_GSL)
-    target_link_libraries(freesteam_test ${GSL_LIBRARIES})
-else(FREESTEAM_WITH_GSL)
-    target_link_libraries(freesteam_test gsl-multiroots)
-endif(FREESTEAM_WITH_GSL)
+if( FREESTEAM_WITH_TESTS )
+ enable_testing ()
 
-add_test(NAME freesteam_test  COMMAND "./freesteam_test")  
-install(TARGETS freesteam_test DESTINATION test)
+ set(MY_TEST_SOURCES src/test.c )
+
+ # build test main exe
+ add_executable(freesteam_test ${MY_TEST_SOURCES})
+ target_link_libraries(freesteam_test freesteamCPP )
+ if  (FREESTEAM_WITH_GSL)
+     target_link_libraries(freesteam_test ${GSL_LIBRARIES})
+ else(FREESTEAM_WITH_GSL)
+    target_link_libraries(freesteam_test gsl-multiroots)
+ endif(FREESTEAM_WITH_GSL)
+
+ add_test(NAME freesteam_test  COMMAND "./freesteam_test")  
+ install(TARGETS freesteam_test DESTINATION test)
+endif( FREESTEAM_WITH_TESTS )
 
 #swig wrapping
 if   ( FREESTEAM_WITH_PYTHON )

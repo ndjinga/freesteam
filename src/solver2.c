@@ -164,7 +164,7 @@ SteamState freesteam_solver2_region3(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 	x[1]= freesteam_T(guess);
 	T = gsl_multiroot_fdfsolver_gnewton;
 	s = gsl_multiroot_fdfsolver_alloc(T, n);
-	gsl_multiroot_fdfsolver_set(s, &f, x);
+	gsl_multiroot_fdfsolver_set(s, &f, x,n);
 	//region3_print_state(iter, s);
 
 	do{
@@ -241,7 +241,7 @@ SteamState freesteam_solver2_region4(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 	x[1]= guess.R4.x;
 	T = gsl_multiroot_fdfsolver_gnewton;
 	s = gsl_multiroot_fdfsolver_alloc(T, n);
-	gsl_multiroot_fdfsolver_set(s, &f, x);
+	gsl_multiroot_fdfsolver_set(s, &f, x,n);
 	//region4_print_state(iter, s);
 
 	do{
@@ -320,7 +320,7 @@ SteamState freesteam_solver2_region2(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 	x[1]= freesteam_T(guess);
 	T = gsl_multiroot_fdfsolver_gnewton;
 	s = gsl_multiroot_fdfsolver_alloc(T, n);
-	gsl_multiroot_fdfsolver_set(s, &f, x);
+	gsl_multiroot_fdfsolver_set(s, &f, x,n);
 	region2_print_state(iter, s);
 
 	do{
@@ -401,7 +401,7 @@ SteamState freesteam_solver2_region1(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 	x[1]= freesteam_T(guess);
 	T = gsl_multiroot_fdfsolver_gnewton;
 	s = gsl_multiroot_fdfsolver_alloc(T, n);
-	gsl_multiroot_fdfsolver_set(s, &f, x);
+	gsl_multiroot_fdfsolver_set(s, &f, x,n);
 	//region1_print_state(iter, s);
 
 	do{
