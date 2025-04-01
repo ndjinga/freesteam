@@ -93,11 +93,6 @@ if( FREESTEAM_WITH_LAPACK )
  message(STATUS "Freesteam requested with LAPACK library. Searching LAPACK library.")
  find_package(LAPACK REQUIRED)
  if  (LAPACK_FOUND)
-    set(LAPACK_INCLUDE_DIRS "/usr/include/lapacke/ /usr/include/openblas/ /usr/include/ ${LAPACK_INCLUDE_DIRS} $ENV{LAPACK_INCLUDE_DIRS}")
-
-    target_include_directories(freesteamCPP PRIVATE ${LAPACK_INCLUDE_DIRS} )
-    target_link_libraries(freesteamCPP ${LAPACK_LIBRARIES})
-
     message (STATUS "LAPACK found at ${LAPACK_LIBRARIES}")
  else(LAPACK_FOUND)
     message(ERROR "Linear Algebra PACKage (LAPACK) lib and headers are not found:"
@@ -117,6 +112,7 @@ else(FREESTEAM_WITH_GSL)#use built in newton solver based on lapack
     message(STATUS "gsl not requested. Building Freesteam with gsl-multiroots.")
     if( FREESTEAM_WITH_LAPACK )
       add_subdirectory(gsl)
+      #target_include_directories(freesteamCPP PRIVATE ${MY_MULTIROOTS_HEADERS_DIR} )
       target_include_directories(freesteamCPP PRIVATE ./gsl/multiroots )
       target_link_libraries(freesteamCPP gsl-multiroots )
     else( FREESTEAM_WITH_LAPACK )

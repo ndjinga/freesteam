@@ -89,9 +89,9 @@ double * gsl_multiroot_fdfsolver_dx (const gsl_multiroot_fdfsolver * s);
 double * gsl_multiroot_fdfsolver_f (const gsl_multiroot_fdfsolver * s);
 
 int gsl_multiroot_test_delta (const double * dx, const double * x, 
-                              double epsabs, double epsrel);
+                              double epsabs, double epsrel, int size);
 
-int gsl_multiroot_test_residual (const double * f, double epsabs);
+int gsl_multiroot_test_residual (const double * f, double epsabs, int size);
 
 extern const gsl_multiroot_fdfsolver_type * gsl_multiroot_fdfsolver_newton;
 extern const gsl_multiroot_fdfsolver_type * gsl_multiroot_fdfsolver_gnewton;

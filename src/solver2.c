@@ -175,7 +175,7 @@ SteamState freesteam_solver2_region3(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 			/* check if solver is stuck */
 			break;
 		}
-		status = gsl_multiroot_test_residual(s->f, 2e-6);
+		status = gsl_multiroot_test_residual(s->f, 2e-6, n);
 	} while(status == EXIT_SUCCESS && iter < 50);
 
 	SteamState S = freesteam_region3_set_rhoT(s->x[0], s->x[1]);
@@ -252,7 +252,7 @@ SteamState freesteam_solver2_region4(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 			/* check if solver is stuck */
 			break;
 		}
-		status = gsl_multiroot_test_residual(s->f, 1e-7);
+		status = gsl_multiroot_test_residual(s->f, 1e-7, n);
 	} while(status == EXIT_SUCCESS && iter < 20);
 
 	fprintf(stderr,"status = %s\n", strerror (status));
@@ -331,7 +331,7 @@ SteamState freesteam_solver2_region2(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 			/* check if solver is stuck */
 			break;
 		}
-		status = gsl_multiroot_test_residual(s->f, 1e-7);
+		status = gsl_multiroot_test_residual(s->f, 1e-7, n);
 	} while(status == EXIT_SUCCESS && iter < 20);
 
 	SteamState S = freesteam_region2_set_pT(s->x[0], s->x[1]);
@@ -412,7 +412,7 @@ SteamState freesteam_solver2_region1(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 			/* check if solver is stuck */
 			break;
 		}
-		status = gsl_multiroot_test_residual(s->f, 1e-6);
+		status = gsl_multiroot_test_residual(s->f, 1e-6,n);
 	} while(status == EXIT_SUCCESS && iter < 20);
 
 	SteamState S = freesteam_region1_set_pT(s->x[0], s->x[1]);

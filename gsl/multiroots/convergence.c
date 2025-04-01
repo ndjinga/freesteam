@@ -17,18 +17,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include <config.h>
+#include <stdio.h>
 #include <math.h>
 #include <errno.h>
 #include <multiroots.h>
 
 int
 gsl_multiroot_test_delta (const double * dx, const double * x, 
-                     double epsabs, double epsrel)
+                     double epsabs, double epsrel, int size)
 {
   size_t i;
   int ok = 1;
-  const size_t n = x->size ;
+  const size_t n = size ;
 
   if (epsrel < 0.0)
     {
@@ -60,13 +60,13 @@ gsl_multiroot_test_delta (const double * dx, const double * x,
 }
 
 int
-gsl_multiroot_test_residual (const double * f, double epsabs)
+gsl_multiroot_test_residual (const double * f, double epsabs, int size)
 {
   size_t i;
 
   double residual = 0;
 
-  const size_t n = f->size;
+  const size_t n = size;
 
   if (epsabs < 0.0)
     {
