@@ -16,14 +16,16 @@ plot(T,dpdT,'g-')
 title("Derivative ∂p/∂T along the saturation line")
 xlabel("T [K]")
 ylabel("∂p/∂T [bar/K]")
+savefig('DerivativePressureWrtTemperatureAlongSaturationLine.pdf')
 
 figure()
 plot(T,rhof,'b-',label="liquid")
 plot(T,rhog,'r-',label="vapour")
 title("Saturation curves, density versus temperature")
 xlabel("T [K]")
-ylabel(r"$\rho$ [kg/m3]")
+ylabel(r"$\rho$ [kg/m³]")
 legend()
+savefig('Density-TemperatureAlongSaturationLine.pdf')
 
 figure()
 T = [273.15 + (freesteam.TCRIT - 273.15)*x/n for x in range(n+1)]
@@ -31,13 +33,13 @@ drhof = [freesteam.drhofdT_T(t) for t in T]
 drhog = [freesteam.drhogdT_T(t) for t in T]
 plot(T,drhof,'b-',label="liquid")
 plot(T,drhog,'r-',label="vapour")
-title("Derivatives of density with respect to temperature along the saturation line")
+title("Derivatives of density \n with respect to temperature along the saturation line")
 axis([273.15,freesteam.TCRIT,-20,+20])
 xlabel("T [K]")
-ylabel(r"$\partial \rho / \partial T$ [kg/m3]")
+ylabel(r"$\partial \rho / \partial T$ [kg/m³/K]")
 
 print( "Exporting PDF file to current directory...")
-savefig('satCurve.pdf')
+savefig('DerivativeDensityWrtTemperatureAlongSaturationLine.pdf')
 
 #show()
 

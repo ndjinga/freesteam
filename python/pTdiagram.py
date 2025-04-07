@@ -5,6 +5,8 @@ from pylab import *
 import math
 
 figure()
+title("P-T diagram \n with lines of constant enthalpy and constant entropy")
+
 
 # SATURATION CURVE
 
@@ -44,9 +46,11 @@ imshow(im,extent=[Tmin,Tmax,pmin/1e6,pmax/1e6],origin='lower',aspect='auto',inte
 hh = arange(100,4500,200)*1e3
 for h in hh:
 	TT2 = [freesteam.steam_ph(p,h).T for p in pp]
-	plot(TT2,pp/1e6,'g-')
+	if h==hh[0]:#display legend for the first line 
+		plot(TT2,pp/1e6,'g-', label='lines of constant enthalpy')
+	else:# no legend
+		plot(TT2,pp/1e6,'g-')
 
-plot(TT0,psat,'b-')
 axis([Tmin,Tmax,pmin/1e6,pmax/1e6])
 #quiver(x,y,u,v,alpha=0.6)
 
@@ -55,13 +59,17 @@ axis([Tmin,Tmax,pmin/1e6,pmax/1e6])
 ss = arange(0,12,1./3)*1e3
 for s in ss:
 	TT2 = [freesteam.steam_ps(p,s).T for p in pp]
-	plot(TT2,pp/1e6,'r:')
+	if s==ss[0]:#display legend for the first line 
+		plot(TT2,pp/1e6,'r:', label='lines of constant entropy')
+	else:# no legend
+		plot(TT2,pp/1e6,'r:')
 
-plot(TT0,psat,'b-')
+# LINES OF liquid-vapour saturation
+plot(TT0,psat,'b-', label='liquid-vapour saturation line')
 axis([Tmin,Tmax,pmin/1e6,pmax/1e6])
 #quiver(x,y,u,v,alpha=0.6)
 
-
+legend()
 xlabel('T / [K]')
 ylabel('p / [MPa]')
 

@@ -29,7 +29,7 @@ def plot_tsp3d():
             zdata[j, i]= T
     ax.plot_wireframe(xdata, ydata, zdata, rstride=1, cstride=1)
     ax.set_xlabel('Pressure / [bar]')
-    ax.set_ylabel('Entropy / [kJ/kgK]')
+    ax.set_ylabel('Entropy / [kJ/kg/K]')
     ax.set_zlabel('Temperature / [K]')
 
     TT0 = np.linspace(273.15, freesteam.TCRIT, 100)
