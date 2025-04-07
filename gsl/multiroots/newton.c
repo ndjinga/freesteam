@@ -50,6 +50,7 @@ newton_alloc (void * vstate, size_t n)
   
   if (m == 0) 
     {
+      fprintf(stderr,"%s (%s:%d): ", __func__,__FILE__,__LINE__);
       perror ("failed to allocate space for lu");
       return EXIT_FAILURE;
     }
@@ -62,6 +63,7 @@ newton_alloc (void * vstate, size_t n)
     {
       free(m);
 
+      fprintf(stderr,"%s (%s:%d): ", __func__,__FILE__,__LINE__);
       perror ("failed to allocate space for permutation");
       return EXIT_FAILURE;
     }
@@ -115,13 +117,15 @@ newton_iterate (void * vstate, gsl_multiroot_function_fdf * fdf, double * x, dou
   
   if (info<0)
     {
+      fprintf(stderr,"%s (%s:%d): ", __func__,__FILE__,__LINE__);
       printf("Argument %i had an illegal value", -info);
       perror("Invalid argument (illegal value)" ); 
       return EXIT_FAILURE;
     }
   else if (info>0)
     {
-      perror(" The factorization LU has been completed, but the factor U is exactly singular, so the solution could not be computed " ); 
+      fprintf(stderr,"%s (%s:%d): ", __func__,__FILE__,__LINE__);
+      perror("newton: The factorization LU has been completed, but the factor U is exactly singular, so the solution could not be computed " ); 
       return EXIT_FAILURE;
     }
 
@@ -139,6 +143,7 @@ newton_iterate (void * vstate, gsl_multiroot_function_fdf * fdf, double * x, dou
     
     if (status != EXIT_SUCCESS) 
       {
+        fprintf(stderr,"%s (%s:%d): ", __func__,__FILE__,__LINE__);
         perror ("Problem in function evaluation");
         return EXIT_FAILURE;
       }

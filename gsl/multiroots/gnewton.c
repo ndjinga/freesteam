@@ -57,6 +57,7 @@ gnewton_alloc (void * vstate, size_t n)
   
   if (m == 0) 
     {
+      fprintf(stderr,"%s (%s:%d): ", __func__,__FILE__,__LINE__);
       perror ("failed to allocate space for lu");
     }
 
@@ -68,6 +69,7 @@ gnewton_alloc (void * vstate, size_t n)
     {
       free(m);//gsl_matrix_free
 
+      fprintf(stderr,"%s (%s:%d): ", __func__,__FILE__,__LINE__);
       perror ("failed to allocate space for permutation");
     }
 
@@ -80,6 +82,7 @@ gnewton_alloc (void * vstate, size_t n)
       free(p);//gsl_permutation_free
       free(m);//gsl_matrix_free
 
+      fprintf(stderr,"%s (%s:%d): ", __func__,__FILE__,__LINE__);
       perror ("failed to allocate space for d");
     }
 
@@ -93,6 +96,7 @@ gnewton_alloc (void * vstate, size_t n)
       free(p);//gsl_permutation_free
       free(m);//gsl_matrix_free
 
+      fprintf(stderr,"%s (%s:%d): ", __func__,__FILE__,__LINE__);
       perror ("failed to allocate space for x_trial");
     }
 
@@ -147,13 +151,15 @@ gnewton_iterate (void * vstate, gsl_multiroot_function_fdf * fdf, double * x, do
 
   if (info<0)
     {
+      fprintf(stderr,"%s (%s:%d): ", __func__,__FILE__,__LINE__);
       printf("Argument %i had an illegal value", -info);
       perror("Invalid argument (illegal value)" ); 
       return EXIT_FAILURE;
     }
   else if (info>0)
     {
-      perror(" The factorization LU has been completed, but the factor U is exactly singular, so the solution could not be computed " ); 
+      fprintf(stderr,"%s (%s:%d): ", __func__,__FILE__,__LINE__);
+      perror("gnewton : The factorization LU has been completed, but the factor U is exactly singular, so the solution could not be computed " ); 
       return EXIT_FAILURE;
     }
 
@@ -175,6 +181,7 @@ new_step:
     
     if (status != EXIT_SUCCESS)
       {
+        fprintf(stderr,"%s (%s:%d): ", __func__,__FILE__,__LINE__);
         return EXIT_FAILURE;
       }
   }
@@ -208,6 +215,7 @@ new_step:
     
     if (status != EXIT_SUCCESS)
       {
+        fprintf(stderr,"%s (%s:%d): ", __func__,__FILE__,__LINE__);
         return EXIT_FAILURE;
       }
   }
