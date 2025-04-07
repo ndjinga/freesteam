@@ -153,6 +153,7 @@ SteamState freesteam_solver2_region3(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 	gsl_multiroot_fdfsolver *s;
 	int status;
 	size_t iter = 0;
+	size_t max_iter = 50;
 	const size_t n = 2;
 
 	Solver2Data D = {A,B,solver2_region3_propfn(A), solver2_region3_propfn(B), atarget,btarget};
@@ -162,7 +163,7 @@ SteamState freesteam_solver2_region3(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 	double *x = malloc (n*sizeof(double));
 	x[0]= freesteam_rho(guess);
 	x[1]= freesteam_T(guess);
-	T = gsl_multiroot_fdfsolver_gnewton;
+	T = gsl_multiroot_fdfsolver_newton;
 	s = gsl_multiroot_fdfsolver_alloc(T, n);
 	gsl_multiroot_fdfsolver_set(s, &f, x,n);
 	//region3_print_state(iter, s);
@@ -173,16 +174,21 @@ SteamState freesteam_solver2_region3(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 		//region3_print_state(iter, s);
 		if(status){
 			/* check if solver is stuck */
+                        fprintf(stderr,"!!!Newton algorithm : Iteration %lu failed,%s (%s:%d): %s: ",(long unsigned)iter, __func__,__FILE__,__LINE__,strerror(status));
 			break;
 		}
 		status = gsl_multiroot_test_residual(s->f, 2e-6, n);
-	} while(status == EXIT_SUCCESS && iter < 50);
+	} while(status == EXIT_SUCCESS && iter < max_iter);
 
+	if( iter == max_iter )
+	    fprintf(stderr,"!!!Newton algorithm : Maximum iteration number reached : iter = %lu ,max_iter = %lu ,%s (%s:%d) ",(long unsigned)iter,(long unsigned)max_iter, __func__,__FILE__,__LINE__);
+	else if(!status)
+	    fprintf(stderr,"\n Newton algorithm succeeded\n ");
+   	
 	SteamState S = freesteam_region3_set_rhoT(s->x[0], s->x[1]);
 	gsl_multiroot_fdfsolver_free(s);
 	free(x);
 	*retstatus = status;
-	if(status)fprintf(stderr,"%s (%s:%d): %s: ",__func__,__FILE__,__LINE__,strerror(status));
 	//freesteam_fprint(stderr,S);
 	return S;
 }
@@ -229,6 +235,7 @@ SteamState freesteam_solver2_region4(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 	gsl_multiroot_fdfsolver *s;
 	int status;
 	size_t iter = 0;
+	size_t max_iter = 20;
 	const size_t n = 2;
 
 	Solver2Data D = {A,B,solver2_region4_propfn(A), solver2_region4_propfn(B), atarget,btarget};
@@ -250,10 +257,14 @@ SteamState freesteam_solver2_region4(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 		//region4_print_state(iter, s);
 		if(status){
 			/* check if solver is stuck */
+                        fprintf(stderr,"!!!Newton algorithm : Iteration %lu failed,%s (%s:%d): %s: ",(long unsigned)iter, __func__,__FILE__,__LINE__,strerror(status));
 			break;
 		}
 		status = gsl_multiroot_test_residual(s->f, 1e-7, n);
-	} while(status == EXIT_SUCCESS && iter < 20);
+	} while(status == EXIT_SUCCESS && iter < max_iter);
+
+	if( iter == max_iter )
+	    fprintf(stderr,"!!!Newton algorithm : Maximum iteration number reached : iter = %lu ,max_iter = %lu ,%s (%s:%d) ",(long unsigned)iter,(long unsigned)max_iter, __func__,__FILE__,__LINE__);
 
 	fprintf(stderr,"status = %s\n", strerror (status));
 	SteamState S = freesteam_region4_set_Tx(s->x[0], s->x[1]);
@@ -308,6 +319,7 @@ SteamState freesteam_solver2_region2(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 	gsl_multiroot_fdfsolver *s;
 	int status;
 	size_t iter = 0;
+	size_t max_iter = 20;
 	const size_t n = 2;
 
 	fprintf(stderr,"region 2 solver...\n");
@@ -329,10 +341,14 @@ SteamState freesteam_solver2_region2(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 		region2_print_state(iter, s);
 		if(status){
 			/* check if solver is stuck */
+                        fprintf(stderr,"!!!Newton algorithm : Iteration %lu failed,%s (%s:%d): %s: ",(long unsigned)iter, __func__,__FILE__,__LINE__,strerror(status));
 			break;
 		}
 		status = gsl_multiroot_test_residual(s->f, 1e-7, n);
-	} while(status == EXIT_SUCCESS && iter < 20);
+	} while(status == EXIT_SUCCESS && iter < max_iter);
+
+	if( iter == max_iter )
+	    fprintf(stderr,"!!!Newton algorithm : Maximum iteration number reached : iter = %lu ,max_iter = %lu ,%s (%s:%d) ",(long unsigned)iter,(long unsigned)max_iter, __func__,__FILE__,__LINE__);
 
 	SteamState S = freesteam_region2_set_pT(s->x[0], s->x[1]);
 	gsl_multiroot_fdfsolver_free(s);
@@ -388,6 +404,7 @@ SteamState freesteam_solver2_region1(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 	gsl_multiroot_fdfsolver *s;
 	int status;
 	size_t iter = 0;
+	size_t max_iter = 20;
 	const size_t n = 2;
 
 
@@ -410,10 +427,14 @@ SteamState freesteam_solver2_region1(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 		//region1_print_state(iter, s);
 		if(status){
 			/* check if solver is stuck */
+                        fprintf(stderr,"!!!Newton algorithm : Iteration %lu failed,%s (%s:%d): %s: ",(long unsigned)iter, __func__,__FILE__,__LINE__,strerror(status));
 			break;
 		}
 		status = gsl_multiroot_test_residual(s->f, 1e-6,n);
-	} while(status == EXIT_SUCCESS && iter < 20);
+	} while(status == EXIT_SUCCESS && iter < max_iter);
+
+	if( iter == max_iter )
+	    fprintf(stderr,"!!!Newton algorithm : Maximum iteration number reached : iter = %lu ,max_iter = %lu ,%s (%s:%d) ",(long unsigned)iter,(long unsigned)max_iter, __func__,__FILE__,__LINE__);
 
 	SteamState S = freesteam_region1_set_pT(s->x[0], s->x[1]);
 	gsl_multiroot_fdfsolver_free(s);
