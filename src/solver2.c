@@ -128,10 +128,10 @@ static int region3_df(const double *x, void *user_data, double *J){
 	double rho = x[0];
 	double T   = x[1];
 	SteamState S = freesteam_region3_set_rhoT(rho,T);
-	J[0, 0]= -1./SQ(rho)*freesteam_region3_dAdvT(D->A,S);
-	J[0, 1]= freesteam_region3_dAdTv(D->A,S);
-	J[1, 0]= -1./SQ(rho)*freesteam_region3_dAdvT(D->B,S);
-	J[1, 1]= freesteam_region3_dAdTv(D->B,S);
+	J[0]= -1./SQ(rho)*freesteam_region3_dAdvT(D->A,S);
+	J[1]= freesteam_region3_dAdTv(D->A,S);
+	J[2]= -1./SQ(rho)*freesteam_region3_dAdvT(D->B,S);
+	J[3]= freesteam_region3_dAdTv(D->B,S);
 	return EXIT_SUCCESS;
 #undef D
 }
@@ -174,14 +174,14 @@ SteamState freesteam_solver2_region3(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 		//region3_print_state(iter, s);
 		if(status){
 			/* check if solver is stuck */
-                        fprintf(stderr,"!!!Newton algorithm : Iteration %lu failed,%s (%s:%d): %s: ",(long unsigned)iter, __func__,__FILE__,__LINE__,strerror(status));
+                        fprintf(stderr,"!!!Newton algorithm : Iteration %lu failed,%s (%s:%d): %s: \n",(long unsigned)iter, __func__,__FILE__,__LINE__,strerror(status));
 			break;
 		}
 		status = gsl_multiroot_test_residual(s->f, 2e-6, n);
 	} while(status == EXIT_SUCCESS && iter < max_iter);
 
 	if( iter == max_iter )
-	    fprintf(stderr,"!!!Newton algorithm : Maximum iteration number reached : iter = %lu ,max_iter = %lu ,%s (%s:%d) ",(long unsigned)iter,(long unsigned)max_iter, __func__,__FILE__,__LINE__);
+	    fprintf(stderr,"!!!Newton algorithm : Maximum iteration number reached : iter = %lu ,max_iter = %lu ,%s (%s:%d) \n",(long unsigned)iter,(long unsigned)max_iter, __func__,__FILE__,__LINE__);
 	else if(!status)
 	    fprintf(stderr,"\n Newton algorithm succeeded\n ");
    	
@@ -210,10 +210,10 @@ static int region4_f(const double *X, void *user_data, double *f){
 static int region4_df(const double *x, void *user_data, double *J){
 #define D ((Solver2Data *)user_data)
 	SteamState S = freesteam_region4_set_Tx(x[0],x[1]);
-	J[0, 0]= freesteam_region4_dAdTx(D->A,S);
-	J[0, 1]= freesteam_region4_dAdxT(D->A,S);
-	J[1, 0]= freesteam_region4_dAdTx(D->B,S);
-	J[1, 1]= freesteam_region4_dAdxT(D->B,S);
+	J[0]= freesteam_region4_dAdTx(D->A,S);
+	J[1]= freesteam_region4_dAdxT(D->A,S);
+	J[2]= freesteam_region4_dAdTx(D->B,S);
+	J[3]= freesteam_region4_dAdxT(D->B,S);
 	return EXIT_SUCCESS;
 #undef D
 }
@@ -296,10 +296,10 @@ static int region2_df(const double *x, void *user_data, double *J){
 	double p = x[0];
 	double T = x[1];
 	SteamState S = freesteam_region2_set_pT(p,T);
-	J[0, 0]= freesteam_region2_dAdpT(D->A,S);
-	J[0, 1]= freesteam_region2_dAdTp(D->A,S);
-	J[1, 0]= freesteam_region2_dAdpT(D->B,S);
-	J[1, 1]= freesteam_region2_dAdTp(D->B,S);
+	J[0]= freesteam_region2_dAdpT(D->A,S);
+	J[1]= freesteam_region2_dAdTp(D->A,S);
+	J[2]= freesteam_region2_dAdpT(D->B,S);
+	J[3]= freesteam_region2_dAdTp(D->B,S);
 	return EXIT_SUCCESS;
 #undef D
 }
@@ -379,10 +379,10 @@ static int region1_df(const double *x, void *user_data, double *J){
 	double p = x[0];
 	double T = x[1];
 	SteamState S = freesteam_region1_set_pT(p,T);
-	J[0, 0]= freesteam_region1_dAdpT(D->A,S);
-	J[0, 1]= freesteam_region1_dAdTp(D->A,S);
-	J[1, 0]= freesteam_region1_dAdpT(D->B,S);
-	J[1, 1]= freesteam_region1_dAdTp(D->B,S);
+	J[0]= freesteam_region1_dAdpT(D->A,S);
+	J[1]= freesteam_region1_dAdTp(D->A,S);
+	J[2]= freesteam_region1_dAdpT(D->B,S);
+	J[3]= freesteam_region1_dAdTp(D->B,S);
 	return EXIT_SUCCESS;
 #undef D
 }
