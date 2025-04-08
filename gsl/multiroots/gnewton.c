@@ -112,8 +112,27 @@ gnewton_set (void * vstate, gsl_multiroot_function_fdf * FDF, double * x, double
   gnewton_state_t * state = (gnewton_state_t *) vstate;
   size_t i, n = FDF->n ;
 
+  /*
+  fprintf(stderr,"\n gnewton_set : Print vector x before set: ");
+  for (i = 0; i < n; i++)
+      fprintf(stderr,"%f, ", x[i]);
+  fprintf(stderr,"\n end vector x before set\n ");
+  */
   GSL_MULTIROOT_FN_EVAL_F_DF (FDF, x, f, J);
+  /*
+  fprintf(stderr,"\n gnewton_set : Print vector f after set: ");
+  for (i = 0; i < n; i++)
+      fprintf(stderr,"%f, ", f[i]);
+  fprintf(stderr,"\n end vector f after set\n ");
 
+  fprintf(stderr,"\n gnewton_set : Print matrix J after set: ");
+  for (i = 0; i < n; i++)
+    for (size_t j = 0; j < n; j++)
+    {
+      fprintf(stderr,"%f, ", J[i,j]);
+    }
+  fprintf(stderr,"\n end matrix J after set\n ");
+  */
   for (i = 0; i < n; i++)
     {
       dx[i]= 0.0;
@@ -143,9 +162,9 @@ gnewton_iterate (void * vstate, gsl_multiroot_function_fdf * fdf, double * x, do
 
   int info=0;
 
-  memcpy (state->lu, J, n*n);//gsl_matrix_memcpy (state->lu, J);
+  memcpy (state->lu, J, n*n*sizeof(double));//gsl_matrix_memcpy (state->lu, J);
 
-  memcpy (state->d, f, n);
+  memcpy (state->d, f, n*sizeof(double));
 
   dgesv_( &n, &nrhs, state->lu, &lda, state->permutation, state->d, &ldb, &info);
 
@@ -202,7 +221,7 @@ new_step:
 
   /* copy x_trial into x */
 
-  memcpy (x, state->x_trial, n);//gsl_vector_memcpy (x, state->x_trial);
+  memcpy (x, state->x_trial, n*sizeof(double));//gsl_vector_memcpy (x, state->x_trial);
 
   for (i = 0; i < n; i++)
     {
