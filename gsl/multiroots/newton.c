@@ -109,9 +109,9 @@ newton_iterate (void * vstate, gsl_multiroot_function_fdf * fdf, double * x, dou
 
   int info=0;
   
-  memcpy (state->lu, J,n*n);//gsl_matrix_memcpy(state->lu, J)
+  memcpy (state->lu, J,n*n*sizeof(double));//gsl_matrix_memcpy(state->lu, J)
 
-  memcpy (dx, f, n);
+  memcpy (dx, f, n*sizeof(double));
 
   dgesv_( &n, &nrhs, state->lu, &lda, state->permutation, dx, &ldb, &info);
   
