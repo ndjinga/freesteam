@@ -13,9 +13,9 @@ option (FREESTEAM_WITH_LAPACK     "Build FREESTEAM with LAPACK (Linear Algebra P
 option (FREESTEAM_WITH_GSL        "Build FREESTEAM with GSL (Gnu Scientific Library)" OFF)
 
 #Path to installed libraries
-set (PYTHON_DIR          OFF CACHE STRING "PYTHON library path" )
-set (LAPACK_DIR          OFF CACHE STRING "LAPACK library path" )
-set (GSL_ROOT            OFF CACHE STRING "GSL library path" )#For the compilation of MED with a specific version of HDF5
+set (Python_ROOT_DIR         OFF CACHE STRING "PYTHON library path" )
+set (LAPACK_LIBRARIES        OFF CACHE STRING "LAPACK library path" )
+set (GSL_ROOT_DIR            OFF CACHE STRING "GSL library path" )
 
 # this version name is used by CPack
 set(PACKAGE_VERSION_NAME ${PACKAGE_VERSION_MAJOR}.${PACKAGE_VERSION_MINOR})
@@ -35,7 +35,6 @@ src/region1.c
 src/region2.c
 src/region3.c
 src/region4.c
-src/solver2.c
 src/steam.c
 src/steam_ph.c
 src/steam_ps.c
@@ -50,6 +49,12 @@ src/thcond.c
 src/viscosity.c
 src/zeroin.c
 )
+
+if   (FREESTEAM_WITH_GSL)
+  set(MY_SOURCES ${MY_SOURCES} src/solver2_with_gsl.c)
+else (FREESTEAM_WITH_GSL)
+  set(MY_SOURCES ${MY_SOURCES} src/solver2_without_gsl.c)
+endif(FREESTEAM_WITH_GSL)
 
 # if installed, it should be put in subfolder of `freesteam` on system include dir
 set(MY_HEADER_DIR "${PROJECT_SOURCE_DIR}/src")
@@ -88,7 +93,7 @@ install(FILES ${MY_HEADERS} DESTINATION include)
 add_library(freesteamCPP SHARED ${MY_SOURCES})
 target_include_directories(freesteamCPP PRIVATE ${MY_HEADER_DIR} )
 
-#LAPACK is an optional depedence
+#LAPACK is an optional dependency
 if( FREESTEAM_WITH_LAPACK )
  message(STATUS "Freesteam requested with LAPACK library. Searching LAPACK library.")
  find_package(LAPACK REQUIRED)
@@ -101,7 +106,7 @@ if( FREESTEAM_WITH_LAPACK )
  endif(LAPACK_FOUND)
 endif( FREESTEAM_WITH_LAPACK )
 
-#GSL is an optional depedence
+#GSL is an optional dependency
 if  (FREESTEAM_WITH_GSL)
     message(STATUS "Freesteam requested with gsl library. Searching gsl library.")
     find_package(GSL REQUIRED)
@@ -112,7 +117,6 @@ else(FREESTEAM_WITH_GSL)#use built in newton solver based on lapack
     message(STATUS "gsl not requested. Building Freesteam with gsl-multiroots.")
     if( FREESTEAM_WITH_LAPACK )
       add_subdirectory(gsl)
-      #target_include_directories(freesteamCPP PRIVATE ${MY_MULTIROOTS_HEADERS_DIR} )
       target_include_directories(freesteamCPP PRIVATE ./gsl/multiroots )
       target_link_libraries(freesteamCPP gsl-multiroots )
     else( FREESTEAM_WITH_LAPACK )
