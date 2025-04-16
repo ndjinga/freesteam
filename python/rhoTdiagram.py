@@ -11,7 +11,7 @@ import math, sys
 pp = [1e4, 5e4, 1e5, 5e5, 1e6, 5e6, 10e6, 20e6, 22e6,23e6,25e6, 30e6,50e6,100e6]
 
 figure()
-title("$\rho$-T diagram \n with lines of equal pressure")
+title(r"$\rho$-T diagram \n with lines of equal pressure")
 
 for p in pp:
 	TT = arange(0,800,2)+273.15
