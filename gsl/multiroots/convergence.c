@@ -71,7 +71,7 @@ gsl_multiroot_test_residual (const double * f, double epsabs, int size)
   if (epsabs < 0.0)
     {
       perror ("absolute tolerance is negative");
-      return EXIT_FAILURE;
+      return EXIT_FAILURE; //residual can not be small enough
     }
  
   for (i = 0 ; i < n ; i++)
@@ -84,9 +84,9 @@ gsl_multiroot_test_residual (const double * f, double epsabs, int size)
 
   if (residual < epsabs)
     {
-      return EXIT_SUCCESS;
+      return EXIT_SUCCESS;// residual is small enough
     }
   
-  return EXIT_SUCCESS ;//previously GSL_CONTINUE
+  return EXIT_FAILURE ;//previously GSL_CONTINUE, residual is not small enough
 }
 

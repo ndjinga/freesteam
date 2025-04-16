@@ -130,14 +130,6 @@ static int region3_df(const gsl_vector *x, void *user_data, gsl_matrix *J){
 	gsl_matrix_set(J, 0, 1, freesteam_region3_dAdTv(D->A,S));
 	gsl_matrix_set(J, 1, 0, -1./SQ(rho)*freesteam_region3_dAdvT(D->B,S));
 	gsl_matrix_set(J, 1, 1, freesteam_region3_dAdTv(D->B,S));
-  fprintf(stderr,"\n region3_df : Print matrix J D->A= %d, D->B= %d: ",D->A,D->B);
-  int n=2;
-  for (size_t i = 0; i < n; i++)
-    for (size_t j = 0; j < n; j++)
-    {
-      fprintf(stderr,"%f, ", gsl_matrix_get (J, i, j));
-    }
-  fprintf(stderr,"\n end matrix J\n ");
 	return GSL_SUCCESS;
 #undef D
 }
@@ -159,6 +151,7 @@ SteamState freesteam_solver2_region3(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 	gsl_multiroot_fdfsolver *s;
 	int status;
 	size_t iter = 0;
+	size_t max_iter = 50;
 	const size_t n = 2;
 
 	Solver2Data D = {A,B,solver2_region3_propfn(A), solver2_region3_propfn(B), atarget,btarget};
@@ -183,6 +176,11 @@ SteamState freesteam_solver2_region3(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 		}
 		status = gsl_multiroot_test_residual(s->f, 2e-6);
 	} while(status == GSL_CONTINUE && iter < 50);
+
+	if( iter == max_iter )
+	    fprintf(stderr,"!!!Error in Fressteam Newton algorithm : Maximum iteration number reached : iter = %lu ,max_iter = %lu ,%s (%s:%d) \n",(long unsigned)iter,(long unsigned)max_iter, __func__,__FILE__,__LINE__);
+	//else if(!status)
+	//    fprintf(stderr,"\n Fressteam Newton algorithm succeeded in %lu iterations.\n ", iter);
 
 	SteamState S = freesteam_region3_set_rhoT(gsl_vector_get(s->x,0), gsl_vector_get(s->x,1));
 	gsl_multiroot_fdfsolver_free(s);

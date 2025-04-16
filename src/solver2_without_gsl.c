@@ -129,9 +129,17 @@ static int region3_df(const double *x, void *user_data, double *J){
 	double T   = x[1];
 	SteamState S = freesteam_region3_set_rhoT(rho,T);
 	J[0]= -1./SQ(rho)*freesteam_region3_dAdvT(D->A,S);
-	J[1]= freesteam_region3_dAdTv(D->A,S);
-	J[2]= -1./SQ(rho)*freesteam_region3_dAdvT(D->B,S);
+	J[2]= freesteam_region3_dAdTv(D->A,S);
+	J[1]= -1./SQ(rho)*freesteam_region3_dAdvT(D->B,S);
 	J[3]= freesteam_region3_dAdTv(D->B,S);
+	/*  Print matrix J
+	fprintf(stderr,"\n region3_df : Print matrix J D->A= %d, D->B= %d: rho=%f, T=%f\n",D->A,D->B, rho, T);
+	int n=2;
+	for (size_t i = 0; i < n; i++)
+	    for (size_t j = 0; j < n; j++)
+	      fprintf(stderr,"%f, ", J[i+ n*j]);
+	fprintf(stderr,"\n end matrix J\n "); 
+	*/
 	return EXIT_SUCCESS;
 #undef D
 }
@@ -174,16 +182,16 @@ SteamState freesteam_solver2_region3(FREESTEAM_CHAR A, FREESTEAM_CHAR B, double 
 		//region3_print_state(iter, s);
 		if(status){
 			/* check if solver is stuck */
-                        fprintf(stderr,"!!!Newton algorithm : Iteration %lu failed,%s (%s:%d): %s: \n",(long unsigned)iter, __func__,__FILE__,__LINE__,strerror(status));
+                        fprintf(stderr,"!!!Error Newton algorithm : Iteration %lu failed,%s (%s:%d): %s: \n",(long unsigned)iter, __func__,__FILE__,__LINE__,strerror(status));
 			break;
 		}
 		status = gsl_multiroot_test_residual(s->f, 2e-6, n);
-	} while(status == EXIT_SUCCESS && iter < max_iter);
+	} while(status == EXIT_FAILURE && iter < max_iter);
 
 	if( iter == max_iter )
-	    fprintf(stderr,"!!!Newton algorithm : Maximum iteration number reached : iter = %lu ,max_iter = %lu ,%s (%s:%d) \n",(long unsigned)iter,(long unsigned)max_iter, __func__,__FILE__,__LINE__);
-	else if(!status)
-	    fprintf(stderr,"\n Newton algorithm succeeded\n ");
+	    fprintf(stderr,"\n!!!Newton algorithm : Maximum iteration number reached : iter = %lu ,max_iter = %lu ,%s (%s:%d) \n",(long unsigned)iter,(long unsigned)max_iter, __func__,__FILE__,__LINE__);
+	//else if(!status)
+	//    fprintf(stderr,"\n Newton algorithm succeeded in %lu iterations.\n ", iter);
    	
 	SteamState S = freesteam_region3_set_rhoT(s->x[0], s->x[1]);
 	gsl_multiroot_fdfsolver_free(s);
