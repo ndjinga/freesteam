@@ -31,7 +31,7 @@ else(${CMAKE_VERSION} VERSION_GREATER "3.8.0")  # this section is not tested
   swig_add_module(${MY_MODULE}   python    ${MY_SWIG_INTERFACE}   )
 endif(${CMAKE_VERSION} VERSION_GREATER "3.8.0")
 
-SWIG_LINK_LIBRARIES(freesteam ${PYTHON_LIBRARIES}  freesteamCPP ${GSL_LIBRARIES} )
+SWIG_LINK_LIBRARIES(freesteam ${PYTHON_LIBRARIES}  freesteamC ${GSL_LIBRARIES} )
 
 INSTALL(TARGETS _freesteam DESTINATION lib/freesteam)
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/freesteam.py DESTINATION bin/freesteam)

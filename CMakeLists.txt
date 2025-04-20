@@ -90,8 +90,8 @@ src/zeroin.h
 
 install(FILES ${MY_HEADERS} DESTINATION include)
 
-add_library(freesteamCPP SHARED ${MY_SOURCES})
-target_include_directories(freesteamCPP PRIVATE ${MY_HEADER_DIR} )
+add_library(freesteamC SHARED ${MY_SOURCES})
+target_include_directories(freesteamC PRIVATE ${MY_HEADER_DIR} )
 
 #LAPACK is an optional dependency
 if( FREESTEAM_WITH_LAPACK )
@@ -111,20 +111,20 @@ if  (FREESTEAM_WITH_GSL)
     message(STATUS "Freesteam requested with gsl library. Searching gsl library.")
     find_package(GSL REQUIRED)
     message (STATUS "GSL found at ${GSL_LIBRARIES}")
-    target_include_directories(freesteamCPP PRIVATE ${GSL_INCLUDE_DIRS} )
-    target_link_libraries(freesteamCPP ${GSL_LIBRARIES})
+    target_include_directories(freesteamC PRIVATE ${GSL_INCLUDE_DIRS} )
+    target_link_libraries(freesteamC ${GSL_LIBRARIES})
 else(FREESTEAM_WITH_GSL)#use built in newton solver based on lapack
     message(STATUS "gsl not requested. Building Freesteam with newton-method.")
     if( FREESTEAM_WITH_LAPACK )
       add_subdirectory(newton-method)
-      target_include_directories(freesteamCPP PRIVATE ./newton-method/multiroots )
-      target_link_libraries(freesteamCPP newton-method )
+      target_include_directories(freesteamC PRIVATE ./newton-method/multiroots )
+      target_link_libraries(freesteamC newton-method )
     else( FREESTEAM_WITH_LAPACK )
       message(ERROR "Either GSL or LAPACK should be requested. Set FREESTEAM_WITH_LAPACK or FREESTEAM_WITH_GSL to ON")
     endif( FREESTEAM_WITH_LAPACK )
 endif(FREESTEAM_WITH_GSL)
 
-install(TARGETS freesteamCPP DESTINATION lib)
+install(TARGETS freesteamC DESTINATION lib)
 
 if( FREESTEAM_WITH_TESTS )
  enable_testing ()
@@ -133,7 +133,7 @@ if( FREESTEAM_WITH_TESTS )
 
  # build test main exe
  add_executable(freesteam_test ${MY_TEST_SOURCES})
- target_link_libraries(freesteam_test freesteamCPP )
+ target_link_libraries(freesteam_test freesteamC )
  if  (FREESTEAM_WITH_GSL)
      target_link_libraries(freesteam_test ${GSL_LIBRARIES})
  else(FREESTEAM_WITH_GSL)
